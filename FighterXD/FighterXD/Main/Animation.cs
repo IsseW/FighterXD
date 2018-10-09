@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace FighterXD.Main
 {
-    class GameObject
+    class Animation
     {
-        protected Texture2D currentSprite;
+        public List<Texture2D> keyframes;
     }
 }
