@@ -10,5 +10,6 @@ namespace FighterXD.Main
     class GameObject
     {
         protected Texture2D currentSprite;
+
     }
 }

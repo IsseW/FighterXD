@@ -9,6 +9,28 @@ namespace FighterXD.Main
 {
     class Animation
     {
-        public List<Texture2D> keyframes;
+        protected List<Texture2D> keyframes;
+        public int fps;
+
+        public Texture2D[] Keyframes
+        {
+            get
+            {
+                return keyframes.ToArray();
+            }
+        }
+
+        public Animation(Texture2D[] keyframes, int fps)
+        {
+            this.keyframes = new List<Texture2D>();
+
+            foreach (Texture2D t in keyframes)
+            {
+                this.keyframes.Add(t);
+            }
+
+            this.fps = fps;
+        }
+        
     }
 }
