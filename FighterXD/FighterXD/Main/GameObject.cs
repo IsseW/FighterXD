@@ -101,6 +101,53 @@ namespace FighterXD.Main
             return local;
         }
 
+        public Vector2 GlobalToLocal(Vector2 global)
+        {
+            GameObject[] h = Heritage;
+            
+            for (int i = 0; i < h.Length; i++)
+            {
+                global = XMath.RotateVector(global - position, -rotation);
+            }
+
+            return global;        }
+
+        public GameObject[] Heritage
+        {
+            get
+            {
+                GameObject g = this;
+                List<GameObject> gs = new List<GameObject>() { g };
+
+                while (g.parent != null)
+                {
+                    gs.Add(g.parent);
+                    g = g.parent;
+                }
+
+                List<GameObject> gss = new List<GameObject>();
+                for (int i = gs.Count - 1; i >= 0; i--)
+                {
+                    gss.Add(gs[i]);
+                }
+
+                return gss.ToArray();
+            }
+        }
+
+        public GameObject Ancestor
+        {
+            get
+            {
+                GameObject g = this;
+                while (g.parent != null)
+                {
+                    g = g.parent;
+                }
+                return g;
+            }
+        }
+
         public Vector2 GlobalPosition
         {
             get
@@ -114,6 +161,36 @@ namespace FighterXD.Main
 
     public class PhysicalObject : GameObject
     {
+        public Collider collider;
 
+        public PhysicalObject(Collider collider) : base()
+        {
+            this.collider = collider;
+        }
+
+        public PhysicalObject(Collider collider, Texture2D sprite) : base(sprite)
+        {
+            this.collider = collider;
+        }
+
+        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position) : base(sprite, position)
+        {
+            this.collider = collider;
+        }
+
+        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, float imageScale) : base(sprite, position, imageScale)
+        {
+            this.collider = collider;
+        }
+
+        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, float imageScale, float rotation) : base(sprite, position, imageScale, rotation)
+        {
+            this.collider = collider;
+        }
+
+        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, float imageScale, float rotation, Vector2 orgin, bool global) : base(sprite, position, imageScale, rotation, orgin, global)
+        {
+            this.collider = collider;
+        }
     }
 }

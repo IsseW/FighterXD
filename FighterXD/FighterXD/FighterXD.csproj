@@ -43,8 +43,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game1.cs" />
-    <Compile Include="Main\Animation.cs" />
+    <Compile Include="Main\Collider.cs" />
     <Compile Include="Main\GameObject.cs" />
+    <Compile Include="Main\XMath.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

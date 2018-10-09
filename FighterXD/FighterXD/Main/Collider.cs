@@ -7,16 +7,53 @@ using System.Threading.Tasks;
 
 namespace FighterXD.Main
 {
-    class Collider
+    public class Collider
     {
+        protected GameObject gameobject;
+
+        public void Init(GameObject gameobject)
+        {
+            this.gameobject = gameobject;
+        }
+
         public virtual bool Collide(Collider other)
         {
             return false;
         }
 
-        public virtual bool ClosestPoint(Vector2 point)
+        public virtual Vector2 ClosestPoint(Vector2 point)
+        {
+            return point;
+        }
+
+        public virtual bool IsInside(Point point)
         {
             return false;
+        }
+    }
+
+
+    public class CircleCollider : Collider
+    {
+        public float radius;
+
+        public CircleCollider(float radius)
+        {
+            this.radius = radius;
+        }
+        public override Vector2 ClosestPoint(Vector2 point)
+        {
+            if (Vector2.Distance(gameobject.position, point)) 
+        }
+
+        public override bool IsInside(Point point)
+        {
+            return base.IsInside(point);
+        }
+
+        public override bool Collide(Collider other)
+        {
+            return base.Collide(other);
         }
     }
 }

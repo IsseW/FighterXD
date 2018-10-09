@@ -14,10 +14,10 @@ namespace FighterXD.Main
             float sin = (float)Math.Sin(angle * 0.0174532925);
             float cos = (float)Math.Cos(angle * 0.0174532925);
 
-            float tx = v.x;
-            float ty = v.y;
-            v.x = (cos * tx) - (sin * ty);
-            v.y = (sin * tx) + (cos * ty);
+            float tx = v.X;
+            float ty = v.Y;
+            v.X = (cos * tx) - (sin * ty);
+            v.Y = (sin * tx) + (cos * ty);
             return v;
         }
     }
