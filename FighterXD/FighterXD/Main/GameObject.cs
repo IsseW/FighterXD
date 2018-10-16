@@ -10,14 +10,27 @@ namespace FighterXD.Main
 {
     public class GameObject
     {
+        protected World world;
+
+        public void Init(World world)
+        {
+            this.world = world;
+        }
+
         public GameObject parent;
 
         public SpriteEffects effects;
 
         public Texture2D sprite;
 
-        public float imageScale;
+        /// <summary>
+        /// Sprite size in pixels.
+        /// </summary>
+        public Vector2 spriteSize;
 
+        /// <summary>
+        /// Where the center of the sprite defaults to center.
+        /// </summary>
         public Vector2 localOrgin;
 
         public Vector2 position;
@@ -26,17 +39,18 @@ namespace FighterXD.Main
 
         public Color color;
 
-        public float rotation
+        public float Rotation
         {
             set
             {
                 while (value >= 360) value -= 360;
                 while (value < 0) value += 360;
+                m_rotation = value;
             }
 
             get
             {
-                return rotation;
+                return m_rotation;
             }
         }
 
@@ -55,17 +69,17 @@ namespace FighterXD.Main
             this.position = position;
         }
 
-        public GameObject(Texture2D sprite, Vector2 position, float imageScale) : this(sprite, position)
+        public GameObject(Texture2D sprite, Vector2 position, Vector2 imageScale) : this(sprite, position)
         {
-            this.imageScale = imageScale;
+            this.spriteSize = imageScale;
         }
 
-        public GameObject(Texture2D sprite, Vector2 position, float imageScale, float rotation) : this(sprite, position, imageScale)
+        public GameObject(Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation) : this(sprite, position, imageScale)
         {
-            this.rotation = rotation;
+            this.Rotation = rotation;
         }
 
-        public GameObject(Texture2D sprite, Vector2 position, float imageScale, float rotation, Vector2 orgin, bool global) : this(sprite, position, imageScale, rotation)
+        public GameObject(Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : this(sprite, position, imageScale, rotation)
         {
 
             if (!global)
@@ -76,26 +90,32 @@ namespace FighterXD.Main
             }
         }
 
-        public void Draw(SpriteBatch spritebatch)
+        public virtual void Draw(SpriteBatch spritebatch)
         {
-            if (sprite != null)
-                spritebatch.Draw(sprite, GlobalPosition, null, color, GlobalRotation, localOrgin, imageScale, effects, 0);
+            Texture2D sprite = null;
+            if (this.sprite != null) sprite = this.sprite;
+            else sprite = XMath.missingTexture;
+
+            Vector2 scale = spriteSize / new Vector2(sprite.Width, sprite.Height);
+
+            spritebatch.Draw(sprite, world.WorldToViewport(GlobalPosition - spriteSize / 2 - localOrgin), null, color, GlobalRotation, localOrgin, scale/world.ViewportZoom, effects, 0);
         }
 
         public float GlobalRotation
         {
             get
             {
+                
                 if (parent != null)
-                    return parent.rotation + rotation;
+                    return parent.Rotation + Rotation;
                 else
-                    return rotation;
+                    return Rotation;
             }
         }
 
         public Vector2 LocalToGlobal(Vector2 local)
         {
-            local = XMath.RotateVector(local, rotation) + position;
+            local = XMath.RotateVector(local, Rotation) + position;
             if (parent != null)
                 return parent.LocalToGlobal(local);
             return local;
@@ -107,7 +127,7 @@ namespace FighterXD.Main
             
             for (int i = 0; i < h.Length; i++)
             {
-                global = XMath.RotateVector(global - position, -rotation);
+                global = XMath.RotateVector(global - position, -Rotation);
             }
 
             return global;        }
@@ -153,7 +173,7 @@ namespace FighterXD.Main
             get
             {
                 if (parent != null)
-                    return parent.GlobalPosition + XMath.RotateVector(position, parent.rotation);
+                    return parent.GlobalPosition + XMath.RotateVector(position, parent.Rotation);
                 else return position;
             }
         }
@@ -161,36 +181,94 @@ namespace FighterXD.Main
 
     public class PhysicalObject : GameObject
     {
-        public Collider collider;
+        private Collider m_collider;
+
+        public Collider Collider
+        {
+            get
+            {
+                return m_collider;
+            }
+            protected set
+            {
+                value.Init(this);
+                m_collider = value;
+            }
+        }
 
         public PhysicalObject(Collider collider) : base()
         {
-            this.collider = collider;
+            Collider = collider;
         }
 
         public PhysicalObject(Collider collider, Texture2D sprite) : base(sprite)
         {
-            this.collider = collider;
+            Collider = collider;
         }
 
         public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position) : base(sprite, position)
         {
-            this.collider = collider;
+            Collider = collider;
         }
 
-        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, float imageScale) : base(sprite, position, imageScale)
+        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale) : base(sprite, position, imageScale)
         {
-            this.collider = collider;
+            Collider = collider;
         }
 
-        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, float imageScale, float rotation) : base(sprite, position, imageScale, rotation)
+        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation) : base(sprite, position, imageScale, rotation)
         {
-            this.collider = collider;
+            Collider = collider;
         }
 
-        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, float imageScale, float rotation, Vector2 orgin, bool global) : base(sprite, position, imageScale, rotation, orgin, global)
+        public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(sprite, position, imageScale, rotation, orgin, global)
         {
-            this.collider = collider;
+            Collider = collider;
+        }
+    }
+
+    public class RigidObject : PhysicalObject
+    {
+        public Vector2 velocity;
+
+        public RigidObject(Collider collider) : base(collider)
+        {
+
+        }
+
+        public RigidObject(Collider collider, Texture2D sprite) : base(collider, sprite)
+        {
+
+        }
+
+        public RigidObject(Collider collider, Texture2D sprite, Vector2 position) : base(collider, sprite, position)
+        {
+
+        }
+
+        public RigidObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale) : base(collider, sprite, position, imageScale)
+        {
+
+        }
+
+        public RigidObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation) : base(collider, sprite, position, imageScale, rotation)
+        {
+
+        }
+
+        public RigidObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(collider, sprite, position, imageScale, rotation, orgin, global)
+        {
+
+        }
+
+        public void Update(float delta)
+        {
+
+        }
+
+        public void AddForce(Vector2 force)
+        {
+            velocity += force;
         }
     }
 }
