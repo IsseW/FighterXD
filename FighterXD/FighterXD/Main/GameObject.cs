@@ -113,6 +113,11 @@ namespace FighterXD.Main
             }
         }
 
+        public Vector2 LocalVectorToGlobal(Vector2 local)
+        {
+            return XMath.RotateVector(local, GlobalRotation);
+        }
+
         public Vector2 LocalToGlobal(Vector2 local)
         {
             local = XMath.RotateVector(local, Rotation) + position;
@@ -257,11 +262,6 @@ namespace FighterXD.Main
         }
 
         public RigidObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(collider, sprite, position, imageScale, rotation, orgin, global)
-        {
-
-        }
-
-        public void Update(float delta)
         {
 
         }
