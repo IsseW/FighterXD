@@ -13,9 +13,9 @@ namespace FighterXD.Main
     {
         public Texture2D background;
         public Vector2 spriteSize;
-        public float µ;
+        public float µ = 0.1f;
 
-        public Vector2 g = new Vector2(0, -100);
+        public Vector2 g = new Vector2(0, 100);
 
         private List<GameObject> gameObjects;
         private List<PhysicalObject> physicalObjects;
