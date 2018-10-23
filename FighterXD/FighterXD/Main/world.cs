@@ -11,8 +11,9 @@ namespace FighterXD.Main
 {
     public class World
     {
+
         public Texture2D background;
-        public Vector2 spriteSize;
+        public Vector2 worldSize
         public float µ = 0.1f;
 
         public Vector2 g = new Vector2(0, 100);
@@ -24,7 +25,7 @@ namespace FighterXD.Main
         public World(Texture2D background, Vector2 spriteSize, Rectangle viewport, params GameObject[] gameObjects)
         {
             this.background = background;
-            this.spriteSize = spriteSize;
+            this.worldSize = spriteSize;
             Viewport = viewport;
 
             this.gameObjects = new List<GameObject>();
@@ -77,7 +78,7 @@ namespace FighterXD.Main
         {
             get
             {
-                return new Rectangle((-spriteSize / 2).ToPoint(), spriteSize.ToPoint());
+                return new Rectangle((-worldSize / 2).ToPoint(), worldSize.ToPoint());
             }
         }
 
