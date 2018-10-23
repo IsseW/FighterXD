@@ -4,13 +4,8 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-<<<<<<< HEAD
-    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/eye.png</File>
-    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/blob.png</File>
-    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/Rocket_Launcher.png</File>
-=======
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/eye.png</File>
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/blob.png</File>
->>>>>>> 76cecbf90fba063c2e643daa92159c276f8813a4
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/Rocket_Launcher.png</File>
   </SourceFiles>
 </SourceFileCollection>

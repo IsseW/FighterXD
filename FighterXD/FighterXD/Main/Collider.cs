@@ -18,22 +18,32 @@ namespace FighterXD.Main
 
         public bool Collide(Collider other)
         {
-            return IsInside(other.ClosestPoint(gameObject.GlobalPosition));
+            Vector2 n;
+            return IsInside(other.ClosestPoint(gameObject.GlobalPosition, out n));
         }
 
-        public bool Collide(Collider other, out Vector2 globalPoint)
+        public bool Collide(Collider other, out Vector2 globalPoint, out Vector2 myNormal, out Vector2 otherNormal)
         {
-            globalPoint = other.ClosestPoint(gameObject.GlobalPosition);
-            return IsInside(globalPoint);
+            
+            globalPoint = other.ClosestPoint(gameObject.GlobalPosition, out otherNormal);
+
+            return IsInside(globalPoint, out myNormal);
         }
 
-        public virtual Vector2 ClosestPoint(Vector2 point)
+        public virtual Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
         {
+            normal = Vector2.Zero;
             return point;
         }
 
         public virtual bool IsInside(Vector2 point)
         {
+            return false;
+        }
+
+        public virtual bool IsInside(Vector2 point, out Vector2 closestNormal)
+        {
+            closestNormal = Vector2.Zero;
             return false;
         }
 
@@ -52,16 +62,24 @@ namespace FighterXD.Main
         {
             this.radius = radius;
         }
-        public override Vector2 ClosestPoint(Vector2 point)
+        public override Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
         {
             point = gameObject.GlobalToLocal(point);
+            normal = Vector2.Normalize(point - gameObject.position);
             if (IsLocalInside(point)) return point;
-            return gameObject.GlobalPosition + Vector2.Normalize(point - gameObject.position) * radius;
+            return gameObject.GlobalPosition +  normal * radius;
         }
 
         public override bool IsInside(Vector2 point)
         {
             return Vector2.Distance(gameObject.GlobalPosition, point) <= radius;
+        }
+
+        public override bool IsInside(Vector2 point, out Vector2 closestNormal)
+        {
+            Vector2 dif = point - gameObject.GlobalPosition;
+            closestNormal = Vector2.Normalize(dif);
+            return dif.Length() <= radius;
         }
 
         public override bool IsLocalInside(Vector2 point)
@@ -76,6 +94,7 @@ namespace FighterXD.Main
 
         private Vector2 top;
         private Vector2 bottom;
+
 
         public Rectangle LocalRect
         {
@@ -111,19 +130,21 @@ namespace FighterXD.Main
             else LocalRect = rect;
         }
 
-        public override Vector2 ClosestPoint(Vector2 point)
+        public override Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
         {
             point = gameObject.GlobalToLocal(point);
-
-            if (IsLocalInside(point)) return gameObject.LocalToGlobal(point);
 
             Vector2 closest = XMath.ClosestPointOnLine(top, new Vector2(bottom.X, top.Y), point);
             float dis = Vector2.Distance(closest, point);
 
+            normal = gameObject.LocalVectorToGlobal(new Vector2(0, -1));
+
             Vector2 test = XMath.ClosestPointOnLine(top, new Vector2(top.X, bottom.Y), point);
             float testDis = Vector2.Distance(test, point);
+
             if (testDis < dis)
             {
+                normal = gameObject.LocalVectorToGlobal(new Vector2(-1, 0));
                 closest = test;
                 dis = testDis;
             }
@@ -132,6 +153,7 @@ namespace FighterXD.Main
             testDis = Vector2.Distance(test, point);
             if (testDis < dis)
             {
+                normal = gameObject.LocalVectorToGlobal(new Vector2(0, 1));
                 closest = test;
                 dis = testDis;
             }
@@ -140,6 +162,7 @@ namespace FighterXD.Main
             testDis = Vector2.Distance(test, point);
             if (testDis < dis)
             {
+                normal = gameObject.LocalVectorToGlobal(new Vector2(1, 0));
                 closest = test;
                 dis = testDis;
             }
@@ -149,6 +172,13 @@ namespace FighterXD.Main
 
         public override bool IsInside(Vector2 point)
         {
+            point = gameObject.GlobalToLocal(point);
+            return IsLocalInside(point);
+        }
+
+        public override bool IsInside(Vector2 point, out Vector2 closestNormal)
+        {
+            ClosestPoint(point, out closestNormal);
             point = gameObject.GlobalToLocal(point);
             return IsLocalInside(point);
         }

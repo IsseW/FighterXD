@@ -38,5 +38,11 @@ namespace FighterXD.Main
             else if (distance > 1) return B;
             else return A + AB * distance;
         }
+
+        public static float GetAngle(Vector2 a, Vector2 b)
+        {
+            float angle = (float)(Math.Atan2(b.Y, b.X) - Math.Atan2(a.Y, a.X));
+            return angle;
+        }
     }
 }

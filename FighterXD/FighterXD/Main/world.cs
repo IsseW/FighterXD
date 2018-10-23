@@ -30,6 +30,7 @@ namespace FighterXD.Main
             {
                 Initialize(g);
             }
+            
         }
 
         public void Initialize(GameObject gameObject)
@@ -159,6 +160,26 @@ namespace FighterXD.Main
         public Vector2 WorldToViewport(Vector2 point)
         {
             return (point - Viewport.Location.ToVector2()) * ViewportZoom;
+        }
+
+        public void Update(float delta)
+        {
+            foreach (RigidObject r in rigidObjects)
+            {
+                r.position += r.velocity * delta;
+                foreach (PhysicalObject p in physicalObjects)
+                {
+                    if (r.Collider.Collide(p.Collider, out Vector2 point, out Vector2 myNormal, out Vector2 oNormal))
+                    {
+                        Vector2 normal = (myNormal + oNormal) / 2;
+                        float a = XMath.GetAngle(normal, new Vector2(0, 1));
+                        Vector2 rotated = XMath.RotateVector(r.velocity, a);
+                        rotated.Y *= -1;
+                        r.velocity = XMath.RotateVector(rotated, -a);
+
+                    }
+                }
+            }
         }
     }
 }
