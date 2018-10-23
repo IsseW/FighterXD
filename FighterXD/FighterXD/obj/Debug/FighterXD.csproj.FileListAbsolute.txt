@@ -38,3 +38,5 @@ C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCP
 C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\obj\Debug\FighterXD.csprojResolveAssemblyReference.cache
 C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\obj\Debug\FighterXD.exe
 C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\obj\Debug\FighterXD.pdb
+C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\background.xnb
+C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\Rocket_Launcher.xnb

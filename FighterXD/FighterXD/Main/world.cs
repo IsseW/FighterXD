@@ -156,21 +156,45 @@ namespace FighterXD.Main
             //=========================================
             foreach (RigidObject r in rigidObjects)
             {
+                bool col = false;
+                float A = 0;
                 r.Update(delta);
-                r.position += r.velocity * delta;
+                if (r.velocity.LengthSquared() > 300)
+                {
+                    r.position += r.velocity * delta;
+                }
+
                 foreach (PhysicalObject p in physicalObjects)
                 {
                     if (r.Collider.Collide(p.Collider, out Vector2 point, out Vector2 myNomral, out Vector2 oNormal))
                     {
-                        Vector2 normal = (myNomral + oNormal) / 2;
-                        float a = XMath.GetAngle(normal, new Vector2(0, 1));
+                        Vector2 normal = oNormal;
+                        float a = XMath.GetAngle(normal, new Vector2(0, -1));
                         Vector2 rotated = XMath.RotateVector(r.velocity, a);
-                        rotated.Y *= -1;
+                        rotated.Y *= -0.8f * (1 + delta);
                         r.velocity = XMath.RotateVector(rotated, -a);
+                        if (!col)
+                            col = true;
+                        if (A == 0) A = a;
+                        else
+                        {
+                            A += a;
+                            A /= 2;
+                        }
                     }
                 }
-                r.velocity += g * delta;
-                r.velocity /= (1 + µ)*delta;
+                if (col)
+                {
+                    Vector2 rotated = XMath.RotateVector(g, A);
+                    if (rotated.Y > 0) rotated.Y = 0;
+                    r.velocity += XMath.RotateVector(rotated, -A) * delta;
+                }
+                else
+                {
+                    r.velocity += g * delta;
+                }
+
+                r.velocity /= 1 + µ * delta;
             }
         }
 
@@ -218,7 +242,6 @@ namespace FighterXD.Main
             else sprite = XMath.missingTexture;
             spritebatch.Draw(sprite, Vector2.Zero, Color.White);
             //spritebatch.Draw(sprite, Vector2.Zero, null, Color.White, 0, Vector2.Zero, new Vector2(window.ClientBounds.Width, window.ClientBounds.Height), SpriteEffects.None, 0);
-            Console.Write(ViewportPosition);
             foreach (GameObject g in gameObjects)
             {
                 g.Draw(spritebatch);
