@@ -44,11 +44,11 @@ namespace FighterXD.Main
             {
                 gameObject.Init(this);
                 gameObjects.Add(gameObject);
-                if (gameObject.GetType().IsAssignableFrom(typeof(PhysicalObject)))
+                if (gameObject as PhysicalObject != null)
                 {
                    physicalObjects.Add((PhysicalObject)gameObject);
 
-                   if (gameObject.GetType().IsAssignableFrom(typeof(RigidObject)))
+                   if (gameObject as RigidObject != null)
                     {
                         rigidObjects.Add((RigidObject)gameObject);
                     }
@@ -61,11 +61,11 @@ namespace FighterXD.Main
             if (gameObjects.Contains(gameObject))
             {
                 gameObjects.Remove(gameObject);
-                if (gameObject.GetType().IsAssignableFrom(typeof(PhysicalObject)))
+                if (gameObject as PhysicalObject != null)
                 {
                     physicalObjects.Remove((PhysicalObject)gameObject);
 
-                    if (gameObject.GetType().IsAssignableFrom(typeof(RigidObject)))
+                    if (gameObject as RigidObject != null)
                     {
                         rigidObjects.Remove((RigidObject)gameObject);
                     }
