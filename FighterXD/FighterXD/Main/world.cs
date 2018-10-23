@@ -170,7 +170,7 @@ namespace FighterXD.Main
                     }
                 }
                 r.velocity += g * delta;
-                //r.velocity /= 1 + µ;
+                r.velocity /= (1 + µ)*delta;
             }
         }
 
