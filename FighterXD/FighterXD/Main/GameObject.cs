@@ -261,6 +261,11 @@ namespace FighterXD.Main
 
         }
 
+        public virtual void Update(float delta)
+        {
+
+        }
+
         public RigidObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(collider, sprite, position, imageScale, rotation, orgin, global)
         {
 
@@ -271,4 +276,6 @@ namespace FighterXD.Main
             velocity += force;
         }
     }
+
+    public class ExplodableObject
 }
