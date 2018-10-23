@@ -15,11 +15,12 @@ namespace FighterXD.Main
         public Vector2 spriteSize;
         public float µ = 0.1f;
 
-        public Vector2 g = new Vector2(0, 100);
+        public Vector2 g = new Vector2(0, 3000);
 
         private List<GameObject> gameObjects;
         private List<PhysicalObject> physicalObjects;
         private List<RigidObject> rigidObjects;
+        private List<ExplodableObject> explodableObjects;
 
         public World(Texture2D background, Vector2 spriteSize, Rectangle viewport, params GameObject[] gameObjects)
         {
@@ -30,13 +31,23 @@ namespace FighterXD.Main
             this.gameObjects = new List<GameObject>();
             physicalObjects = new List<PhysicalObject>();
             rigidObjects = new List<RigidObject>();
+            explodableObjects = new List<ExplodableObject>();
             foreach (GameObject g in gameObjects)
             {
                 Initialize(g);
             }
         }
 
-
+        public void Explode(PhysicalObject toCheck)
+        {
+            foreach (ExplodableObject e in explodableObjects.ToList())
+            {
+                if (toCheck.Collider.Collide(e.Collider))
+                {
+                    Remove(e);
+                }
+            }
+        }
 
         public void Initialize(GameObject gameObject)
         {
@@ -49,8 +60,12 @@ namespace FighterXD.Main
                    physicalObjects.Add((PhysicalObject)gameObject);
 
                    if (gameObject as RigidObject != null)
+                   {
+                       rigidObjects.Add((RigidObject)gameObject);
+                   }
+                    if (gameObject as ExplodableObject != null)
                     {
-                        rigidObjects.Add((RigidObject)gameObject);
+                        explodableObjects.Add((ExplodableObject)gameObject);
                     }
                 }
             }
@@ -173,8 +188,7 @@ namespace FighterXD.Main
                         Vector2 rotated = XMath.RotateVector(r.velocity, a);
                         rotated.Y *= -0.8f * (1 + delta);
                         r.velocity = XMath.RotateVector(rotated, -a);
-                        if (!col)
-                            col = true;
+                        if (!col) col = true;
                         if (A == 0) A = a;
                         else
                         {
