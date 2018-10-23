@@ -44,11 +44,11 @@ namespace FighterXD.Main
             {
                 gameObject.Init(this);
                 gameObjects.Add(gameObject);
-                if (gameObject.GetType().IsAssignableFrom(typeof(PhysicalObject)))
+                if (gameObject.GetType().IsSubclassOf(typeof(PhysicalObject)))
                 {
                    physicalObjects.Add((PhysicalObject)gameObject);
 
-                   if (gameObject.GetType().IsAssignableFrom(typeof(RigidObject)))
+                   if (gameObject.GetType().IsSubclassOf(typeof(RigidObject)))
                     {
                         rigidObjects.Add((RigidObject)gameObject);
                     }

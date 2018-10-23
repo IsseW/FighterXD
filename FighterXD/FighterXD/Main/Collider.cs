@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,7 +92,11 @@ namespace FighterXD.Main
 
     public class RectangleCollider : Collider
     {
-
+        public void SetSize()
+        {
+            top = gameObject.spriteSize / -2;
+            bottom = gameObject.spriteSize / 2;
+        }
         private Vector2 top;
         private Vector2 bottom;
 

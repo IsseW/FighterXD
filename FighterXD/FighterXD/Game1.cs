@@ -28,13 +28,20 @@ namespace FighterXD
         
         protected override void LoadContent()
         {
+            
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            world = new World(Content.Load<Texture2D>("background"),new Vector2(1920,1080),new Rectangle(100,100,Window.ClientBounds.Width ,Window.ClientBounds.Height));
+            world = new World(Content.Load<Texture2D>("background"),new Vector2(4000,4000),new Rectangle(0,0,Window.ClientBounds.Width ,Window.ClientBounds.Height));
             world.ViewportZoom = 1.01f;
-           // player1 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
-           // player2 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
-           // background = new Background(Content.Load<Texture2D>("jail"), Window);
-           // weapon = new Weapon(Content.Load<Texture2D>("Rocket_launcher"));
+            PhysicalObject p = new PhysicalObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 500), new Vector2(200, 200));
+            world.Initialize(p);
+            ((RectangleCollider)p.Collider).SetSize();
+            RigidObject p2 = new RigidObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 1000), new Vector2(200, 200));
+            world.Initialize(p2);
+            ((RectangleCollider)p2.Collider).SetSize();
+            // player1 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
+            // player2 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
+            // background = new Background(Content.Load<Texture2D>("jail"), Window);
+            // weapon = new Weapon(Content.Load<Texture2D>("Rocket_launcher"));
 
         }
         

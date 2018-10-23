@@ -277,5 +277,5 @@ namespace FighterXD.Main
         }
     }
 
-    public class ExplodableObject
+   // public class ExplodableObject
 }
