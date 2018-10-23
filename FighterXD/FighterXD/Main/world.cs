@@ -197,6 +197,7 @@ namespace FighterXD.Main
 
         public Vector2 WorldToViewport(Vector2 point)
         {
+
             return (point - Viewport.Location.ToVector2()) * ViewportZoom;
         }
     }
