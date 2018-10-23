@@ -220,7 +220,7 @@ namespace FighterXD.Main
         {
             Collider = collider;
         }
-
+        
         public PhysicalObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(sprite, position, imageScale, rotation, orgin, global)
         {
             Collider = collider;
