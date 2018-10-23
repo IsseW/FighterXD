@@ -13,6 +13,9 @@ namespace FighterXD.Main
     {
         public Texture2D background;
         public Vector2 spriteSize;
+        public float µ;
+
+        public Vector2 g = new Vector2(0, -100);
 
         private List<GameObject> gameObjects;
         private List<PhysicalObject> physicalObjects;
@@ -41,15 +44,15 @@ namespace FighterXD.Main
             {
                 gameObject.Init(this);
                 gameObjects.Add(gameObject);
-                //if (gameObject.GetType().IsAssignableFrom(typeof(PhysicalObject)))
-                //{
-                //    physicalObjects.Add((PhysicalObject)gameObject);
+                if (gameObject.GetType().IsAssignableFrom(typeof(PhysicalObject)))
+                {
+                   physicalObjects.Add((PhysicalObject)gameObject);
 
-                //    if (gameObject.GetType().IsAssignableFrom(typeof(RigidObject)))
-                //    {
-                //        rigidObjects.Add((RigidObject)gameObject);
-                //    }
-                //}
+                   if (gameObject.GetType().IsAssignableFrom(typeof(RigidObject)))
+                    {
+                        rigidObjects.Add((RigidObject)gameObject);
+                    }
+                }
             }
         }
 
@@ -119,6 +122,10 @@ namespace FighterXD.Main
         }
         public void Update(float delta, KeyboardState state)
         {
+
+            //=========================================
+            //==============CAMERA MOVEMENT============
+            //=========================================
             if (state.IsKeyDown(Keys.A))
             {
                 ViewportPosition -= new Vector2(5, 0);
@@ -142,6 +149,28 @@ namespace FighterXD.Main
             if (state.IsKeyDown(Keys.E))
             {
                 ViewportZoom -= 0.5f;
+            }
+
+            //=========================================
+            //=================PHYSICS=================
+            //=========================================
+            foreach (RigidObject r in rigidObjects)
+            {
+                r.Update(delta);
+                r.position += r.velocity * delta;
+                foreach (PhysicalObject p in physicalObjects)
+                {
+                    if (r.Collider.Collide(p.Collider, out Vector2 point, out Vector2 myNomral, out Vector2 oNormal))
+                    {
+                        Vector2 normal = (myNomral + oNormal) / 2;
+                        float a = XMath.GetAngle(normal, new Vector2(0, 1));
+                        Vector2 rotated = XMath.RotateVector(r.velocity, a);
+                        rotated.Y *= -0.5f;
+                        r.velocity = XMath.RotateVector(rotated, -a);
+                    }
+                }
+                r.velocity += g * delta;
+                r.velocity /= 1 + µ;
             }
         }
 
