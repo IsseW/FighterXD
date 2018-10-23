@@ -13,9 +13,9 @@ namespace FighterXD.Main
     {
         public Texture2D background;
         public Vector2 spriteSize;
-        public float µ;
+        public float µ = 0.1f;
 
-        public Vector2 g = new Vector2(0, -100);
+        public Vector2 g = new Vector2(0, 100);
 
         private List<GameObject> gameObjects;
         private List<PhysicalObject> physicalObjects;
@@ -44,19 +44,11 @@ namespace FighterXD.Main
             {
                 gameObject.Init(this);
                 gameObjects.Add(gameObject);
-<<<<<<< HEAD
-                if (gameObject.GetType().IsSubclassOf(typeof(PhysicalObject)))
-                {
-                   physicalObjects.Add((PhysicalObject)gameObject);
-
-                   if (gameObject.GetType().IsSubclassOf(typeof(RigidObject)))
-=======
                 if (gameObject as PhysicalObject != null)
                 {
                    physicalObjects.Add((PhysicalObject)gameObject);
 
                    if (gameObject as RigidObject != null)
->>>>>>> 683874507ccf37db8569900588ced8d5ff22914e
                     {
                         rigidObjects.Add((RigidObject)gameObject);
                     }
