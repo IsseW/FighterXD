@@ -165,7 +165,7 @@ namespace FighterXD.Main
                         Vector2 normal = (myNomral + oNormal) / 2;
                         float a = XMath.GetAngle(normal, new Vector2(0, 1));
                         Vector2 rotated = XMath.RotateVector(r.velocity, a);
-                        rotated.Y *= 1;
+                        rotated.Y *= -1;
                         r.velocity = XMath.RotateVector(rotated, -a);
                     }
                 }
