@@ -277,5 +277,53 @@ namespace FighterXD.Main
         }
     }
 
-   // public class ExplodableObject
+    public class ExplodableObject : PhysicalObject
+    {
+        public Vector2 velocity;
+
+        public ExplodableObject(Collider collider) : base(collider)
+        {
+
+        }
+
+        public ExplodableObject(Collider collider, Texture2D sprite) : base(collider, sprite)
+        {
+
+        }
+
+        public ExplodableObject(Collider collider, Texture2D sprite, Vector2 position) : base(collider, sprite, position)
+        {
+
+        }
+
+        public ExplodableObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale) : base(collider, sprite, position, imageScale)
+        {
+
+        }
+
+        public ExplodableObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation) : base(collider, sprite, position, imageScale, rotation)
+        {
+
+        }
+
+        public virtual void Update(float delta)
+        {
+
+        }
+
+        public ExplodableObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(collider, sprite, position, imageScale, rotation, orgin, global)
+        {
+
+        }
+
+
+
+        public void AddForce(Vector2 force)
+        {
+            velocity += force;
+        }
+    }
 }
+
+
+

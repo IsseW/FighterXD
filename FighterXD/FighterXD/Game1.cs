@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace FighterXD
 {
@@ -35,7 +36,7 @@ namespace FighterXD
             PhysicalObject p = new PhysicalObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 500), new Vector2(200, 200));
             world.Initialize(p);
             ((RectangleCollider)p.Collider).SetSize();
-            RigidObject p2 = new RigidObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 1000), new Vector2(200, 200));
+            RigidObject p2 = new RigidObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 600), new Vector2(200, 200));
             world.Initialize(p2);
             ((RectangleCollider)p2.Collider).SetSize();
             // player1 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
@@ -53,7 +54,7 @@ namespace FighterXD
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            world.Update(0.1f, Keyboard.GetState());
+            world.Update((float)gameTime.ElapsedGameTime.Milliseconds/1000, Keyboard.GetState());
             base.Update(gameTime);
         }
         
