@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,21 +34,23 @@ namespace FighterXD.Main
             
         }
 
+        
+
         public void Initialize(GameObject gameObject)
         {
             if (!gameObjects.Contains(gameObject))
             {
                 gameObject.Init(this);
                 gameObjects.Add(gameObject);
-                if (gameObject.GetType().IsAssignableFrom(typeof(PhysicalObject)))
-                {
-                    physicalObjects.Add((PhysicalObject)gameObject);
+                //if (gameObject.GetType().IsAssignableFrom(typeof(PhysicalObject)))
+                //{
+                //    physicalObjects.Add((PhysicalObject)gameObject);
                     
-                    if (gameObject.GetType().IsAssignableFrom(typeof(RigidObject)))
-                    {
-                        rigidObjects.Add((RigidObject)gameObject);
-                    }
-                }
+                //    if (gameObject.GetType().IsAssignableFrom(typeof(RigidObject)))
+                //    {
+                //        rigidObjects.Add((RigidObject)gameObject);
+                //    }
+                //}
             }
         }
 
@@ -78,6 +81,18 @@ namespace FighterXD.Main
 
         private Rectangle m_viewport;
 
+        public Vector2 ViewportPosition
+        {
+            get
+            {
+                return Viewport.Location.ToVector2();
+            }
+            set
+            {
+                Viewport = new Rectangle(value.ToPoint(), Viewport.Size);
+            }
+        }
+
         public Rectangle Viewport
         {
             get
@@ -88,19 +103,45 @@ namespace FighterXD.Main
             set
             {
                 Rectangle r = Rect;
-                Point p;
-                Point s;
+                Point p = value.Location;
+                Point s = value.Size;
 
-                if (value.Width > r.Width) s.X = r.Width;
-                if (value.Height > r.Height) s.Y = r.Height;
+                if (s.X > r.Width) s.X = r.Width;
+                if (s.Y > r.Height) s.Y = r.Height;
 
-                if (value.Location.X < r.X) p.X = r.X;
-                if (value.Location.Y < r.Y) p.Y = r.Y;
+                if (p.X < r.X) p.X = r.X;
+                if (p.Y < r.Y) p.Y = r.Y;
 
-                if (value.Location.X + value.Width > r.Left) p.X = r.Left - value.Width;
-                if (value.Location.Y + value.Height > r.Bottom) p.Y = r.Bottom - value.Height;
+                if (p.X + s.X > r.Right) p.X = r.Right - s.X;
+                if (p.Y + s.Y > r.Bottom) p.Y = r.Bottom - s.Y;
 
-                m_viewport = value;
+                m_viewport = new Rectangle(p, s);
+            }
+        }
+        public void Update(float delta, KeyboardState state)
+        {
+            if (state.IsKeyDown(Keys.A)){
+                ViewportPosition -= new Vector2(5, 0);
+            }
+            if (state.IsKeyDown(Keys.D))
+            {
+                ViewportPosition += new Vector2(5, 0);
+            }
+            if (state.IsKeyDown(Keys.S))
+            {
+                ViewportPosition += new Vector2(0, 5);
+            }
+            if (state.IsKeyDown(Keys.W))
+            {
+                ViewportPosition -= new Vector2(0, 5);
+            }
+            if (state.IsKeyDown(Keys.Q))
+            {
+                ViewportZoom += 0.5f;
+            }
+            if (state.IsKeyDown(Keys.E))
+            {
+                ViewportZoom -= 0.5f;
             }
         }
 
@@ -118,7 +159,7 @@ namespace FighterXD.Main
             }
             set
             {
-                if (value <= 1) throw new Exception("Viewport zoom must be larger than one");
+                if (value <= 1) value = 1.0000001f;
                 m_viewportZoom = value;
             }
         }
@@ -141,16 +182,14 @@ namespace FighterXD.Main
             }
         }
 
-        public void Draw(SpriteBatch spritebatch)
+        public void Draw(SpriteBatch spritebatch, GameWindow window)
         {
             Texture2D sprite = null;
             if (background != null) sprite = background;
             else sprite = XMath.missingTexture;
-
-            Vector2 scale = spriteSize / new Vector2(sprite.Width, sprite.Height);
-
-            spritebatch.Draw(sprite, WorldToViewport(- spriteSize / 2), null, Color.White, 0, Vector2.Zero, scale / ViewportZoom, SpriteEffects.None, 0);
-
+            spritebatch.Draw(sprite, Vector2.Zero, Color.White);
+            //spritebatch.Draw(sprite, Vector2.Zero, null, Color.White, 0, Vector2.Zero, new Vector2(window.ClientBounds.Width, window.ClientBounds.Height), SpriteEffects.None, 0);
+            Console.Write(ViewportPosition);
             foreach (GameObject g in gameObjects)
             {
                 g.Draw(spritebatch);
