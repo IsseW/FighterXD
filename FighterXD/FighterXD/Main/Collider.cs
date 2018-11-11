@@ -12,120 +12,170 @@ namespace FighterXD.Main
     {
         protected GameObject gameObject;
 
+        public Vector2 position;
+
+        private void Update()
+        {
+            if (gameObject != null)
+                position = gameObject.GlobalPosition;
+        }
+
+        protected Vector2 GlobalToLocal(Vector2 v)
+        {
+            if (gameObject != null) return gameObject.GlobalToLocal(v);
+            else return v - position;
+        }
+        protected Vector2 LocalToGlobal(Vector2 v)
+        {
+            if (gameObject != null) return gameObject.LocalToGlobal(v);
+            else return v + position;
+        }
+
+        protected Vector2 LocalVectorToGlobal(Vector2 v)
+        {
+            if (gameObject != null) return gameObject.LocalVectorToGlobal(v);
+            else return v;
+        }
+
+        public void Update(Vector2 position)
+        {
+            this.position = position;
+        }
+
         public void Init(GameObject gameobject)
         {
             this.gameObject = gameobject;
         }
 
-        public bool Collide(Collider other)
-        {
-            Vector2 n;
-            return IsInside(other.ClosestPoint(gameObject.GlobalPosition, out n));
-        }
-
-        public bool Collide(Collider other, out Vector2 globalPoint, out Vector2 myNormal, out Vector2 otherNormal)
-        {
-            
-            globalPoint = other.ClosestPoint(gameObject.GlobalPosition, out otherNormal);
-
-            return IsInside(globalPoint, out myNormal);
-        }
-
-        public virtual Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
-        {
-            normal = Vector2.Zero;
-            return point;
-        }
-
-        public virtual bool IsInside(Vector2 point)
+        public virtual bool Contained(Collider other)
         {
             return false;
         }
 
-        public virtual bool IsInside(Vector2 point, out Vector2 closestNormal)
+        public bool Collide(Collider other)
+        {
+            Update();
+            other.Update(); Update();
+            other.Update();
+            Vector2 otherPoint = other.ClosestPoint(position, out Vector2 otherNormal);
+            Vector2 myPoint = ClosestPoint(other.position, out Vector2 myNormal);
+            return IsInside(otherPoint) || other.IsInside(myPoint);
+        }
+
+        public bool Collide(Collider other, out Vector2 myPoint, out Vector2 otherPoint, out Vector2 otherNormal)
+        {
+            Update();
+            other.Update();
+            otherPoint = other.ClosestPoint(position, out otherNormal);
+            myPoint = ClosestPoint(other.position, out Vector2 myNormal);
+            return IsInside(otherPoint) || other.IsInside(myPoint);
+        }
+
+        protected virtual Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
+        {
+            normal = Vector2.Zero;
+            return point;
+        }
+        
+
+        protected virtual bool IsInside(Vector2 point)
+        {
+            return false;
+        }
+
+        protected virtual bool IsInside(Vector2 point, out Vector2 closestNormal)
         {
             closestNormal = Vector2.Zero;
             return false;
         }
 
-        public virtual bool IsLocalInside(Vector2 point)
+        protected virtual bool IsLocalInside(Vector2 point)
         {
             return false;
         }
+
+        public virtual void SetSize() { }
     }
 
 
     public class CircleCollider : Collider
     {
+        public override void SetSize()
+        {
+            radius = gameObject.spriteSize.Y / 2;
+        }
+
         public float radius;
 
         public CircleCollider(float radius)
         {
             this.radius = radius;
         }
-        public override Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
+        protected override Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
         {
-            point = gameObject.GlobalToLocal(point);
-            normal = Vector2.Normalize(point - gameObject.position);
-            if (IsLocalInside(point)) return point;
-            return gameObject.GlobalPosition +  normal * radius;
+            point = GlobalToLocal(point);
+            normal = Vector2.Normalize(point);
+            return position +  normal * radius;
         }
 
-        public override bool IsInside(Vector2 point)
+        protected override bool IsInside(Vector2 point)
         {
-            return Vector2.Distance(gameObject.GlobalPosition, point) <= radius;
+            return Vector2.Distance(position, point) <= radius;
         }
 
-        public override bool IsInside(Vector2 point, out Vector2 closestNormal)
+        protected override bool IsInside(Vector2 point, out Vector2 closestNormal)
         {
-            Vector2 dif = point - gameObject.GlobalPosition;
+            Vector2 dif = point - position;
             closestNormal = Vector2.Normalize(dif);
             return dif.Length() <= radius;
         }
 
-        public override bool IsLocalInside(Vector2 point)
+        protected override bool IsLocalInside(Vector2 point)
         {
-            return Vector2.Distance(gameObject.position, point) <= radius;
+            return point.Length() <= radius;
         }
     }
 
 
     public class RectangleCollider : Collider
     {
-        public void SetSize()
+        public override void SetSize()
         {
-            top = gameObject.spriteSize / -2;
-            bottom = gameObject.spriteSize / 2;
+            topLeft = gameObject.spriteSize / -2;
+            bottomRight = gameObject.spriteSize / 2;
         }
-        private Vector2 top;
-        private Vector2 bottom;
+        private Vector2 topLeft;
+        private Vector2 bottomRight;
+        private Vector2 topRight => new Vector2(bottomRight.X, topLeft.Y);
+        private Vector2 bottomLeft => new Vector2(topLeft.X, bottomRight.Y);
 
 
         public Rectangle LocalRect
         {
             get
             {
-                return new Rectangle(top.ToPoint(), (top - bottom).ToPoint());
+                return new Rectangle(topLeft.ToPoint(), (topLeft - bottomRight).ToPoint());
             }
 
             set
             {
-                top = value.Location.ToVector2();
-                bottom = value.Location.ToVector2() + value.Size.ToVector2();
+                topLeft = value.Location.ToVector2();
+                bottomRight = value.Location.ToVector2() + value.Size.ToVector2();
             }
         }
 
+        
         public Rectangle GlobalRect
         {
             get
             {
-                return new Rectangle(gameObject.LocalToGlobal(top).ToPoint(), gameObject.LocalToGlobal(top - bottom).ToPoint());
+                return new Rectangle(LocalToGlobal(topLeft).ToPoint(), LocalToGlobal(topLeft - bottomRight).ToPoint());
             }
 
             set
             {
-                top = gameObject.GlobalToLocal(value.Location.ToVector2());
-                bottom = gameObject.GlobalToLocal(value.Location.ToVector2() + value.Size.ToVector2());
+                topLeft = GlobalToLocal(value.Location.ToVector2());
+                bottomRight = GlobalToLocal(value.Location.ToVector2() + value.Size.ToVector2());
             }
         }
 
@@ -135,62 +185,102 @@ namespace FighterXD.Main
             else LocalRect = rect;
         }
 
-        public override Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
+        protected override Vector2 ClosestPoint(Vector2 point, out Vector2 normal)
         {
-            point = gameObject.GlobalToLocal(point);
-
-            Vector2 closest = XMath.ClosestPointOnLine(top, new Vector2(bottom.X, top.Y), point);
-            float dis = Vector2.Distance(closest, point);
-
-            normal = gameObject.LocalVectorToGlobal(new Vector2(0, -1));
-
-            Vector2 test = XMath.ClosestPointOnLine(top, new Vector2(top.X, bottom.Y), point);
-            float testDis = Vector2.Distance(test, point);
-
-            if (testDis < dis)
+            
+            //converts point into local space
+            point = GlobalToLocal(point);
+            if (true)
             {
-                normal = gameObject.LocalVectorToGlobal(new Vector2(-1, 0));
-                closest = test;
-                dis = testDis;
-            }
+                if (Vector2.DistanceSquared(point, topLeft) < Vector2.DistanceSquared(point, bottomRight))
+                {
+                    if (Vector2.DistanceSquared(point, topRight) < Vector2.DistanceSquared(point, bottomLeft))
+                    {
+                        normal = LocalVectorToGlobal(new Vector2(0, -1));
+                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, bottomLeft, point));
+                    }
+                    else
+                    {
+                        normal = LocalVectorToGlobal(new Vector2(-1, 0));
+                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, topRight, point));
+                    }
+                }
+                else
+                {
+                    if (Vector2.DistanceSquared(point, topRight) < Vector2.DistanceSquared(point, bottomLeft))
+                    {
+                        normal = LocalVectorToGlobal(new Vector2(1, 0));
+                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, topRight, point));
+                    }
+                    else
+                    {
+                        normal = LocalVectorToGlobal(new Vector2(0, 1));
+                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, bottomLeft, point));
+                    }
+                }
 
-            test = XMath.ClosestPointOnLine(bottom, new Vector2(top.X, bottom.Y), point);
-            testDis = Vector2.Distance(test, point);
-            if (testDis < dis)
+            }
+            else
             {
-                normal = gameObject.LocalVectorToGlobal(new Vector2(0, 1));
-                closest = test;
-                dis = testDis;
-            }
+                // gets the closest point on the line between top left corner and top right corner
+                Vector2 closest = XMath.ClosestPointOnLine(topLeft, new Vector2(bottomRight.X, topLeft.Y), point);
+                float dis = Vector2.DistanceSquared(closest, point);
+                normal = new Vector2(0, -1);
 
-            test = XMath.ClosestPointOnLine(bottom, new Vector2(top.Y, bottom.X), point);
-            testDis = Vector2.Distance(test, point);
-            if (testDis < dis)
-            {
-                normal = gameObject.LocalVectorToGlobal(new Vector2(1, 0));
-                closest = test;
-                dis = testDis;
-            }
 
-            return gameObject.LocalToGlobal(closest);
+                // test if the point on the line between the top right corner and the bottom left corner is closer
+                Vector2 test = XMath.ClosestPointOnLine(new Vector2(topLeft.Y, bottomRight.X), bottomRight, point);
+                float testDis = Vector2.DistanceSquared(test, point);
+                if (testDis < dis)
+                {
+                    normal = new Vector2(1, 0);
+                    closest = test;
+                    dis = testDis;
+                }
+
+                //test if the point on the line between the top right corner and the bottom left corner is closer.
+                test = XMath.ClosestPointOnLine(topLeft, new Vector2(topLeft.X, bottomRight.Y), point);
+                testDis = Vector2.DistanceSquared(test, point);
+                if (testDis < dis)
+                {
+                    // if it is assign the normal to be correct and assign test to closest
+                    normal = new Vector2(-1, 0);
+                    closest = test;
+                    dis = testDis;
+                }
+
+                //test if the point on the line between the bottom right corner and the bottom left is closer
+                test = XMath.ClosestPointOnLine(bottomRight, new Vector2(topLeft.X, bottomRight.Y), point);
+                testDis = Vector2.DistanceSquared(test, point);
+                if (testDis < dis)
+                {
+                    normal = new Vector2(0, 1);
+                    closest = test;
+                    dis = testDis;
+                }
+
+                if (gameObject != null)
+                    normal = LocalVectorToGlobal(normal);
+                return LocalToGlobal(closest);
+            }
         }
 
-        public override bool IsInside(Vector2 point)
+        protected override bool IsInside(Vector2 point)
         {
-            point = gameObject.GlobalToLocal(point);
+            point = GlobalToLocal(point);
             return IsLocalInside(point);
         }
 
-        public override bool IsInside(Vector2 point, out Vector2 closestNormal)
+        protected override bool IsInside(Vector2 point, out Vector2 closestNormal)
         {
             ClosestPoint(point, out closestNormal);
-            point = gameObject.GlobalToLocal(point);
+            point = GlobalToLocal(point);
             return IsLocalInside(point);
         }
 
-        public override bool IsLocalInside(Vector2 point)
+        protected override bool IsLocalInside(Vector2 point)
         {
-            return (point.X > top.X && point.Y > top.Y && point.X < bottom.X && point.Y < bottom.Y);
+            return (point.X >= topLeft.X && point.Y >= topLeft.Y && point.X <= bottomRight.X && point.Y <= bottomRight.Y);
         }
     }
 }

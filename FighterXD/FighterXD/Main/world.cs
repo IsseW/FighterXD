@@ -9,30 +9,69 @@ using System.Threading.Tasks;
 
 namespace FighterXD.Main
 {
+    public struct Input
+    {
+        public KeyboardState keyboard;
+        public MouseState mouse;
+
+        public Input(KeyboardState keyboard, MouseState mouse)
+        {
+            this.keyboard = keyboard;
+            this.mouse = mouse;
+        }
+    }
+
+    public struct Viewport
+    {
+        public Vector2 center;
+
+        public Vector2 ratio;
+
+        public float size;
+
+        public Vector2 Size
+        {
+            get
+            {
+                return ratio * size;
+            }
+        }
+
+        public Viewport (Vector2 center, Vector2 ratio)
+        {
+            this.center = center;
+            this.ratio = ratio;
+            size = 1;
+        }
+    }
+
     public class World
     {
-
+        public Input input;
         public Texture2D background;
-        public Vector2 worldSize
+        public Vector2 worldSize;
         public float µ = 0.1f;
 
         public Vector2 g = new Vector2(0, 3000);
 
-        private List<GameObject> gameObjects;
+        private List<Object> objects;
         private List<PhysicalObject> physicalObjects;
         private List<RigidObject> rigidObjects;
         private List<ExplodableObject> explodableObjects;
+        private List<IUpdateable> updateables;
+        private List<IDrawable> drawables;
 
-        public World(Texture2D background, Vector2 spriteSize, Rectangle viewport, params GameObject[] gameObjects)
+        public World(Texture2D background, Vector2 worldSize, Viewport viewport, params GameObject[] gameObjects)
         {
             this.background = background;
-            this.worldSize = spriteSize;
-            Viewport = viewport;
-
-            this.gameObjects = new List<GameObject>();
+            this.worldSize = worldSize;
+            this.viewport = viewport;
+            this.objects = new List<Object>();
             physicalObjects = new List<PhysicalObject>();
             rigidObjects = new List<RigidObject>();
             explodableObjects = new List<ExplodableObject>();
+            updateables = new List<IUpdateable>();
+            drawables = new List<IDrawable>();
             foreach (GameObject g in gameObjects)
             {
                 Initialize(g);
@@ -50,42 +89,88 @@ namespace FighterXD.Main
             }
         }
 
-        public void Initialize(GameObject gameObject)
+        public void Explode(Collider collider, Vector2 position)
         {
-            if (!gameObjects.Contains(gameObject))
+            collider.Update(position);
+            foreach (ExplodableObject e in explodableObjects.ToList())
             {
-                gameObject.Init(this);
-                gameObjects.Add(gameObject);
-                if (gameObject as PhysicalObject != null)
+                if (collider.Collide(e.Collider))
                 {
-                   physicalObjects.Add((PhysicalObject)gameObject);
-
-                   if (gameObject as RigidObject != null)
-                   {
-                       rigidObjects.Add((RigidObject)gameObject);
-                   }
-                    if (gameObject as ExplodableObject != null)
-                    {
-                        explodableObjects.Add((ExplodableObject)gameObject);
-                    }
+                    Remove(e);
                 }
             }
         }
 
-        public void Remove(GameObject gameObject)
+        public void Initialize(Object @object)
         {
-            if (gameObjects.Contains(gameObject))
+            if (!objects.Contains(@object))
             {
-                gameObjects.Remove(gameObject);
-                if (gameObject as PhysicalObject != null)
+                @object.Init(this);
+                objects.Add(@object);
+                if (@object as PhysicalObject != null)
                 {
-                    physicalObjects.Remove((PhysicalObject)gameObject);
 
-                    if (gameObject as RigidObject != null)
-                    {
-                        rigidObjects.Remove((RigidObject)gameObject);
+                   if (@object as RigidObject != null)
+                   {
+                       rigidObjects.Add((RigidObject)@object);
+                   }
+                   else
+                   {
+                        physicalObjects.Add((PhysicalObject)@object);
+                        if (@object as ExplodableObject != null)
+                        {
+                            explodableObjects.Add((ExplodableObject)@object);
+                        }
                     }
                 }
+                if (@object.GetType().GetInterfaces().Contains(typeof(IUpdateable)))
+                {
+                    updateables.Add((IUpdateable)@object);
+                }
+                if (@object.GetType().GetInterfaces().Contains(typeof(IDrawable)))
+                {
+                    drawables.Add((IDrawable)@object);
+                }
+            }
+
+            foreach(Object g in @object.children)
+            {
+                Initialize(g);
+            }
+        }
+
+        public void Remove(Object @object)
+        {
+            if (objects.Contains(@object))
+            {
+                objects.Remove(@object);
+                if (@object as PhysicalObject != null)
+                {
+                    if (@object as RigidObject != null)
+                    {
+                        rigidObjects.Remove((RigidObject)@object);
+                    }
+                    else
+                    {
+                        physicalObjects.Remove((PhysicalObject)@object);
+                        if (@object as ExplodableObject != null)
+                        {
+                            explodableObjects.Remove((ExplodableObject)@object);
+                        }
+                    }
+                }
+            }
+            if (@object.GetType().GetInterfaces().Contains(typeof(IUpdateable)))
+            {
+                updateables.Remove((IUpdateable)@object);
+            }
+            if (@object.GetType().GetInterfaces().Contains(typeof(IDrawable)))
+            {
+                drawables.Remove((IDrawable)@object);
+            }
+            foreach (Object g in @object.children)
+            {
+                Remove(g);
             }
         }
 
@@ -97,158 +182,101 @@ namespace FighterXD.Main
             }
         }
 
-        private Rectangle m_viewport;
+        public Viewport viewport;
 
-        public Vector2 ViewportPosition
+        void ZoomViewport(float x)
         {
-            get
-            {
-                return Viewport.Location.ToVector2();
-            }
-            set
-            {
-                Viewport = new Rectangle(value.ToPoint(), Viewport.Size);
-            }
+            viewport.size *= 1 + x;
         }
 
-        public Rectangle Viewport
+        public void Update(float delta, KeyboardState state, MouseState mouseState, GameWindow window)
         {
-            get
-            {
-                return m_viewport;
-            }
-
-            set
-            {
-                Rectangle r = Rect;
-                Point p = value.Location;
-                Point s = value.Size;
-
-                if (s.X > r.Width) s.X = r.Width;
-                if (s.Y > r.Height) s.Y = r.Height;
-
-                if (p.X < r.X) p.X = r.X;
-                if (p.Y < r.Y) p.Y = r.Y;
-
-                if (p.X + s.X > r.Right) p.X = r.Right - s.X;
-                if (p.Y + s.Y > r.Bottom) p.Y = r.Bottom - s.Y;
-
-                m_viewport = new Rectangle(p, s);
-            }
-        }
-        public void Update(float delta, KeyboardState state)
-        {
-
+            input = new Input(state, mouseState);
             //=========================================
             //==============CAMERA MOVEMENT============
             //=========================================
-            if (state.IsKeyDown(Keys.A))
+            if (mouseState.Position.X <= 0 && viewport.center.X > -worldSize.X/2)
             {
-                ViewportPosition -= new Vector2(5, 0);
+                viewport.center -= new Vector2(5, 0) / viewport.size;
             }
-            if (state.IsKeyDown(Keys.D))
+            if (mouseState.Position.X >= window.ClientBounds.Width - 1 && viewport.center.X < worldSize.X / 2)
             {
-                ViewportPosition += new Vector2(5, 0);
+                viewport.center += new Vector2(5, 0) / viewport.size;
             }
-            if (state.IsKeyDown(Keys.S))
+            if (mouseState.Position.Y >= window.ClientBounds.Height - 1 && viewport.center.Y < worldSize.Y / 2)
             {
-                ViewportPosition += new Vector2(0, 5);
+                viewport.center += new Vector2(0, 5) / viewport.size;
             }
-            if (state.IsKeyDown(Keys.W))
+            if (mouseState.Position.Y <= 0&& viewport.center.Y > -worldSize.Y / 2)
             {
-                ViewportPosition -= new Vector2(0, 5);
+                viewport.center -= new Vector2(0, 5) / viewport.size;
             }
             if (state.IsKeyDown(Keys.Q))
             {
-                ViewportZoom += 0.5f;
+                ZoomViewport(0.03f);
             }
             if (state.IsKeyDown(Keys.E))
             {
-                ViewportZoom -= 0.5f;
+                ZoomViewport(-0.03f);
             }
 
             //=========================================
             //=================PHYSICS=================
             //=========================================
-            foreach (RigidObject r in rigidObjects)
+            foreach (RigidObject r in rigidObjects.ToList())
             {
+                if (!Rect.Contains(r.position.ToPoint())) Remove(r);
+                r.timeSinceLastCollision += delta;
                 bool col = false;
-                float A = 0;
-                r.Update(delta);
-                if (r.velocity.LengthSquared() > 300)
+                List<Vector2> no = new List<Vector2>();
+                if (r.Collider != null)
                 {
-                    r.position += r.velocity * delta;
-                }
-
-                foreach (PhysicalObject p in physicalObjects)
-                {
-                    if (r.Collider.Collide(p.Collider, out Vector2 point, out Vector2 myNomral, out Vector2 oNormal))
+                    foreach (PhysicalObject p in physicalObjects.ToList())
                     {
-                        Vector2 normal = oNormal;
-                        float a = XMath.GetAngle(normal, new Vector2(0, -1));
-                        Vector2 rotated = XMath.RotateVector(r.velocity, a);
-                        rotated.Y *= -0.8f * (1 + delta);
-                        r.velocity = XMath.RotateVector(rotated, -a);
-                        if (!col) col = true;
-                        if (A == 0) A = a;
-                        else
+                        if (p.active)
                         {
-                            A += a;
-                            A /= 2;
+                            if (r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
+                            {
+                                Vector2 velOld = r.velocity;
+                                float velAlongNormal = Vector2.Dot(r.velocity, oNormal);
+                                if (velAlongNormal < 0)
+                                {
+                                    r.AddForce(-oNormal * velAlongNormal * (delta) * Vector2.Distance(otherPoint, myPoint));
+                                    if (!col) col = true;
+                                    no.Add(oNormal);
+                                    r.OnCollisionEnter(velOld, p.Collider, myPoint);
+                                }
+
+
+                            }
                         }
                     }
-                }
-                if (col)
-                {
-                    Vector2 rotated = XMath.RotateVector(g, A);
-                    if (rotated.Y > 0) rotated.Y = 0;
-                    r.velocity += XMath.RotateVector(rotated, -A) * delta;
-                }
-                else
-                {
-                    r.velocity += g * delta;
+                    r.SetCollisionNormals(no.ToArray());
                 }
 
+                Vector2 add = r.velocity;
+                if (r.GetCollisionNormals() != null)
+                    foreach (Vector2 v in r.GetCollisionNormals())
+                    {
+                        float f = Vector2.Dot(add, v);
+                        if (f < 0)
+                            add -= v * f;
+                    }
+
+                r.position += add * delta;
+                
+                r.AddForce(g * delta);
                 r.velocity /= 1 + µ * delta;
             }
-        }
-
-        private float m_viewportZoom;
-
-        /// <summary>
-        /// Viewport zoom.
-        /// for example if viewport zoom is 2 the size of each pixel in the vieport is 2x bigger than if the viewport covered the whole map.
-        /// </summary>
-        public float ViewportZoom
-        {
-            get
+            //=========================================
+            //=================UPDATE=================
+            //=========================================
+            foreach (IUpdateable i in updateables)
             {
-                return m_viewportZoom;
-            }
-            set
-            {
-                if (value <= 1) value = 1.0000001f;
-                m_viewportZoom = value;
+                i.Update(delta);
             }
         }
 
-        private float m_viewportRatio;
-
-        /// <summary>
-        /// Height / width ratio
-        /// </summary>
-        public float ViewportRatio
-        {
-            get
-            {
-                return m_viewportRatio;
-            }
-            set
-            {
-                if (value <= 0) throw new Exception("Viewport ratio must be larger than zero");
-                ViewportRatio = value;
-            }
-        }
 
         public void Draw(SpriteBatch spritebatch, GameWindow window)
         {
@@ -256,17 +284,21 @@ namespace FighterXD.Main
             if (background != null) sprite = background;
             else sprite = XMath.missingTexture;
             spritebatch.Draw(sprite, Vector2.Zero, Color.White);
-            //spritebatch.Draw(sprite, Vector2.Zero, null, Color.White, 0, Vector2.Zero, new Vector2(window.ClientBounds.Width, window.ClientBounds.Height), SpriteEffects.None, 0);
-            foreach (GameObject g in gameObjects)
+            Rectangle v = new Rectangle((viewport.center - viewport.Size / (2 * viewport.size)).ToPoint(), viewport.Size.ToPoint());
+            foreach (IDrawable d in drawables)
             {
-                g.Draw(spritebatch);
+                d.Draw(spritebatch);
             }
         }
 
         public Vector2 WorldToViewport(Vector2 point)
         {
-
-            return (point - Viewport.Location.ToVector2()) * ViewportZoom;
+            return ((point - viewport.center) * viewport.size + viewport.Size/(2 * viewport.size));
+        }
+        
+        public Vector2 ViewportToWorld(Vector2 point)
+        {
+            return (point - viewport.Size / (2 * viewport.size)) / viewport.size + viewport.center;
         }
     }
 }
