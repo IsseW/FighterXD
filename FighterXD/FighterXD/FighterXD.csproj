@@ -48,6 +48,9 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Main\Collider.cs" />
     <Compile Include="Main\GameObject.cs" />
+    <Compile Include="Main\Interfaces.cs" />
+    <Compile Include="Main\Object.cs" />
+    <Compile Include="Main\Player.cs" />
     <Compile Include="Main\World.cs" />
     <Compile Include="Main\XMath.cs" />
     <Compile Include="Program.cs" />
