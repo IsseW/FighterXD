@@ -82,7 +82,7 @@ namespace FighterXD.Main
         {
             foreach (ExplodableObject e in explodableObjects.ToList())
             {
-                if (toCheck.Collider.Collide(e.Collider))
+                if (Vector2.DistanceSquared(toCheck.position, e.position) <= toCheck.Collider.maxDistSquared + e.Collider.maxDistSquared && toCheck.Collider.Collide(e.Collider))
                 {
                     Remove(e);
                 }
