@@ -14,7 +14,9 @@ namespace FighterXD.Main
 
         public Vector2 position;
 
-        private void Update()
+        public float maxDistSquared { get; protected set; }
+
+        private void Update ()
         {
             if (gameObject != null)
                 position = gameObject.GlobalPosition;
@@ -105,7 +107,20 @@ namespace FighterXD.Main
             radius = gameObject.spriteSize.Y / 2;
         }
 
-        public float radius;
+        public float radius
+        {
+            get
+            {
+                return m_radius;
+            }
+            set
+            {
+                m_radius = value;
+                maxDistSquared = value * value;
+            }
+        }
+
+        private float m_radius;
 
         public CircleCollider(float radius)
         {
@@ -126,13 +141,14 @@ namespace FighterXD.Main
         protected override bool IsInside(Vector2 point, out Vector2 closestNormal)
         {
             Vector2 dif = point - position;
-            closestNormal = Vector2.Normalize(dif);
-            return dif.Length() <= radius;
+            float m = dif.Length();
+            closestNormal = dif / m;
+            return m <= radius;
         }
 
         protected override bool IsLocalInside(Vector2 point)
         {
-            return point.Length() <= radius;
+            return maxDistSquared <= radius;
         }
     }
 
@@ -144,10 +160,48 @@ namespace FighterXD.Main
             topLeft = gameObject.spriteSize / -2;
             bottomRight = gameObject.spriteSize / 2;
         }
-        private Vector2 topLeft;
-        private Vector2 bottomRight;
+        private Vector2 topLeft
+        {
+            get
+            {
+                return m_top;
+            }
+            set
+            {
+                m_top = value;
+                float f = m_top.LengthSquared();
+                if (maxDistSquared < f) maxDistSquared = f;
+                f = topRight.Length();
+                if (maxDistSquared < f) maxDistSquared = f;
+                f = bottomLeft.Length();
+                if (maxDistSquared < f) maxDistSquared = f;
+
+            }
+        }
+        private Vector2 bottomRight
+        {
+            get
+            {
+                return m_bot;
+            }
+            set
+            {
+                m_bot = value;
+                float f = m_bot.LengthSquared();
+                if (maxDistSquared < f) maxDistSquared = f;
+                f = topRight.Length();
+                if (maxDistSquared < f) maxDistSquared = f;
+                f = bottomLeft.Length();
+                if (maxDistSquared < f) maxDistSquared = f;
+
+            }
+        }
+
         private Vector2 topRight => new Vector2(bottomRight.X, topLeft.Y);
         private Vector2 bottomLeft => new Vector2(topLeft.X, bottomRight.Y);
+
+        private Vector2 m_top;
+        private Vector2 m_bot;
 
 
         public Rectangle LocalRect
@@ -192,7 +246,10 @@ namespace FighterXD.Main
             point = GlobalToLocal(point);
             if (true)
             {
-                if (Vector2.DistanceSquared(point, topLeft) < Vector2.DistanceSquared(point, bottomRight))
+                Vector2 PBR = point - bottomRight;
+                Vector2 PTL = point - topLeft;
+
+                if (PTL.LengthSquared() < PBR.LengthSquared())
                 {
                     if (Vector2.DistanceSquared(point, topRight) < Vector2.DistanceSquared(point, bottomLeft))
                     {

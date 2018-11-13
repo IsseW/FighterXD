@@ -94,7 +94,7 @@ namespace FighterXD.Main
             collider.Update(position);
             foreach (ExplodableObject e in explodableObjects.ToList())
             {
-                if (collider.Collide(e.Collider))
+                if (Vector2.DistanceSquared(position, e.position) <= collider.maxDistSquared + e.Collider.maxDistSquared && collider.Collide(e.Collider))
                 {
                     Remove(e);
                 }
@@ -235,7 +235,7 @@ namespace FighterXD.Main
                     {
                         if (p.active)
                         {
-                            if (r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
+                            if (Vector2.DistanceSquared(p.position, r.position) <= r.Collider.maxDistSquared + p.Collider.maxDistSquared && r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
                             {
                                 Vector2 velOld = r.velocity;
                                 float velAlongNormal = Vector2.Dot(r.velocity, oNormal);
