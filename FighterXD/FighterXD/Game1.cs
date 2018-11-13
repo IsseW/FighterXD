@@ -112,14 +112,14 @@ namespace FighterXD
                 blocksY = (int)Math.Ceiling(blocks.Y);
             }
 
-
+            Random random = new Random();
             for (int y = 0; y <= blocksY; y++)
             {
                 for (int x = 0; x <= blocksX; x++)
                 {
                     Vector2 pos = start + new Vector2(x, y) * blockSize;
 
-                    ExplodableObject p = new ExplodableObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, blockSize);
+                    ExplodableObject p = new ExplodableObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, blockSize) {color = new Color((uint)random.Next(65306, 5677662)) };
                     p.Collider.SetSize();
                     world.Initialize(p);
                 }
