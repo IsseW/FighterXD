@@ -77,8 +77,15 @@ namespace FighterXD.Main
                 Initialize(g);
             }
         }
+        
+        public async void Explode(PhysicalObject toCheck)
+        {
+            Task t = new Task(new Action(delegate { M_Explode(toCheck); }));
+            t.Start();
+            await t;
+        }
 
-        public void Explode(PhysicalObject toCheck)
+        private void M_Explode(PhysicalObject toCheck)
         {
             foreach (ExplodableObject e in explodableObjects.ToList())
             {
@@ -271,7 +278,7 @@ namespace FighterXD.Main
             //=========================================
             //=================UPDATE=================
             //=========================================
-            foreach (IUpdateable i in updateables)
+            foreach (IUpdateable i in updateables.ToList())
             {
                 i.Update(delta);
             }
@@ -285,9 +292,10 @@ namespace FighterXD.Main
             else sprite = XMath.missingTexture;
             spritebatch.Draw(sprite, Vector2.Zero, Color.White);
             Rectangle v = new Rectangle((viewport.center - viewport.Size / (2 * viewport.size)).ToPoint(), viewport.Size.ToPoint());
-            foreach (IDrawable d in drawables)
+            foreach (IDrawable d in drawables.ToList())
             {
-                d.Draw(spritebatch);
+                if (d != null)
+                    d.Draw(spritebatch);
             }
         }
 
