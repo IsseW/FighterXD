@@ -57,7 +57,7 @@ namespace FighterXD.Main
         
         public GameObject() : base()
         {
-            color = Color.White;
+            color = new Color(255, 255, 255, 255);
         }
 
         public GameObject(Texture2D sprite) : this()
@@ -100,7 +100,7 @@ namespace FighterXD.Main
         {
             if (sprite != null)
             {
-                
+                color.A = 255;
                 //spritebatch.Draw(g.sprite, WorldToViewport(g.GlobalPosition), null, g.color, g.GlobalRotation, (g.localOrgin) * viewport.size, scale * viewport.size, g.effects, 0);
                 spritebatch.Draw(sprite, world.WorldToViewport(GlobalPosition), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
             }
