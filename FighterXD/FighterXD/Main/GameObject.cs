@@ -16,13 +16,38 @@ namespace FighterXD.Main
         public SpriteEffects effects;
 
 
-        public Texture2D sprite;
+        public Texture2D sprite
+        {
+            get
+            {
+                return m_sprite;
+            }
+            set
+            {
+                m_sprite = value;
+                scale = spriteSize / new Vector2(sprite.Width, sprite.Height);
+            }
+        }
+
+        private Texture2D m_sprite;
 
         /// <summary>
         /// Sprite size in pixels.
         /// </summary>
-        public Vector2 spriteSize;
+        public Vector2 spriteSize
+        {
+            get
+            {
+                return m_spriteSize;
+            }
+            set
+            {
+                m_spriteSize = value;
+                scale = spriteSize / new Vector2(sprite.Width, sprite.Height);
+            }
+        }
 
+        private Vector2 m_spriteSize;
         /// <summary>
         /// Where the center of the sprite defaults to center.
         /// </summary>
@@ -69,12 +94,13 @@ namespace FighterXD.Main
             }
         }
 
+        private Vector2 scale;
+
         public void Draw(SpriteBatch spritebatch)
         {
             if (sprite != null)
             {
-                Vector2 scale = spriteSize / new Vector2(sprite.Width, sprite.Height);
-
+                
                 //spritebatch.Draw(g.sprite, WorldToViewport(g.GlobalPosition), null, g.color, g.GlobalRotation, (g.localOrgin) * viewport.size, scale * viewport.size, g.effects, 0);
                 spritebatch.Draw(sprite, world.WorldToViewport(GlobalPosition), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
             }
