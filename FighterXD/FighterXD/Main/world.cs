@@ -96,6 +96,14 @@ namespace FighterXD.Main
             }
         }
 
+        private async void M_Explode(Collider collider, Vector2 position)
+        {
+            Task t = new Task(new Action(delegate { M_Explode(collider, position); }));
+            t.Start();
+            await t;
+
+        }
+
         public void Explode(Collider collider, Vector2 position)
         {
             collider.Update(position);
