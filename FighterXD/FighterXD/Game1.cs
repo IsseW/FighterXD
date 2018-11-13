@@ -111,7 +111,7 @@ namespace FighterXD
                 blocksX = (int)Math.Ceiling(blocks.X);
                 blocksY = (int)Math.Ceiling(blocks.Y);
             }
-
+             
             Random random = new Random();
             for (int y = 0; y <= blocksY; y++)
             {
