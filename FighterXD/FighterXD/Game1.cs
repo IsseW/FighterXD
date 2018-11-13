@@ -119,7 +119,7 @@ namespace FighterXD
                 {
                     Vector2 pos = start + new Vector2(x, y) * blockSize;
 
-                    ExplodableObject p = new ExplodableObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, blockSize) {color = new Color((uint)random.Next(65306, 5677662)) };
+                    ExplodableObject p = new ExplodableObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, blockSize) {color = new Color(86,162,94,255) };
                     p.Collider.SetSize();
                     world.Initialize(p);
                 }

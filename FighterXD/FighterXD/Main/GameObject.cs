@@ -76,7 +76,7 @@ namespace FighterXD.Main
                 Vector2 scale = spriteSize / new Vector2(sprite.Width, sprite.Height);
 
                 //spritebatch.Draw(g.sprite, WorldToViewport(g.GlobalPosition), null, g.color, g.GlobalRotation, (g.localOrgin) * viewport.size, scale * viewport.size, g.effects, 0);
-                spritebatch.Draw(sprite, world.WorldToViewport(GlobalPosition), null, Color.White, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
+                spritebatch.Draw(sprite, world.WorldToViewport(GlobalPosition), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
             }
         }
     }
