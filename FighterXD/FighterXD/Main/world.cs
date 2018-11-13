@@ -13,7 +13,7 @@ namespace FighterXD.Main
     {
 
         public Texture2D background;
-        public Vector2 worldSize
+        public Vector2 worldSize;
         public float µ = 0.1f;
 
         public Vector2 g = new Vector2(0, 3000);

@@ -36,13 +36,8 @@ namespace FighterXD
             PhysicalObject p = new PhysicalObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 500), new Vector2(200, 200));
             world.Initialize(p);
             ((RectangleCollider)p.Collider).SetSize();
-<<<<<<< HEAD
-            
-            RigidObject p2 = new RigidObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 0), new Vector2(200, 200));
 
-=======
             RigidObject p2 = new RigidObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 0), new Vector2(200, 200));
->>>>>>> 2d04e2795e6a031e49cd824659ddd63fa374b299
             world.Initialize(p2);
             ((RectangleCollider)p2.Collider).SetSize();
             // player1 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
