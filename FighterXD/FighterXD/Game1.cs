@@ -48,9 +48,8 @@ namespace FighterXD
         {
             
             spriteBatch = new SpriteBatch(GraphicsDevice);
-<<<<<<< HEAD
-            world = new World(Content.Load<Texture2D>("background"),new Vector2(4000,4000),new Rectangle(0,0,Window.ClientBounds.Width ,Window.ClientBounds.Height));
-            world.ViewportZoom = 1.01f;
+            world = new World(Content.Load<Texture2D>("background"),new Vector2(4000,4000), new Main.Viewport(new Vector2(0, 0), new Vector2(Window.ClientBounds.Width, Window.ClientBounds.Height)));
+
             PhysicalObject p = new PhysicalObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 500), new Vector2(200, 200));
             world.Initialize(p);
             ((RectangleCollider)p.Collider).SetSize();
@@ -58,7 +57,7 @@ namespace FighterXD
             RigidObject p2 = new RigidObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), Content.Load<Texture2D>("Rocket_Launcher"), new Vector2(500, 0), new Vector2(200, 200));
             world.Initialize(p2);
             ((RectangleCollider)p2.Collider).SetSize();
-=======
+
             world = new World(Content.Load<Texture2D>("background"),new Vector2(80000,80000),new Main.Viewport(new Vector2(0, 0), new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight)));
             //world.ViewportZoom = 1.01f;
 
@@ -90,9 +89,7 @@ namespace FighterXD
             }; 
             world.Initialize(player1);
 
-
-
->>>>>>> b9bcccb28ce9afea643c45b86a843379d9ea9a15
+            
             // player1 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
             // player2 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
             // background = new Background(Content.Load<Texture2D>("jail"), Window);
