@@ -53,11 +53,11 @@ namespace FighterXD.Main
         /// </summary>
         public Vector2 localOrgin;
 
-        public Color color;
+        public Color color = new Color(255, 255, 255, 255);
         
         public GameObject() : base()
         {
-            color = new Color(255, 255, 255, 255);
+
         }
 
         public GameObject(Texture2D sprite) : this()
