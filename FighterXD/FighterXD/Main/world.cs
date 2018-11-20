@@ -89,7 +89,7 @@ namespace FighterXD.Main
         {
             foreach (ExplodableObject e in explodableObjects.ToList())
             {
-                if (Vector2.DistanceSquared(toCheck.position, e.position) <= toCheck.Collider.maxDistSquared + e.Collider.maxDistSquared && toCheck.Collider.Collide(e.Collider))
+                if (e != null && Vector2.DistanceSquared(toCheck.position, e.position) <= toCheck.Collider.maxDistSquared + e.Collider.maxDistSquared && toCheck.Collider.Collide(e.Collider))
                 {
                     Remove(e);
                 }
@@ -109,7 +109,7 @@ namespace FighterXD.Main
             collider.Update(position);
             foreach (ExplodableObject e in explodableObjects.ToList())
             {
-                if (Vector2.DistanceSquared(position, e.position) <= collider.maxDistSquared + e.Collider.maxDistSquared && collider.Collide(e.Collider))
+                if (e != null && Vector2.DistanceSquared(position, e.position) <= collider.maxDistSquared + e.Collider.maxDistSquared && collider.Collide(e.Collider))
                 {
                     Remove(e);
                 }
@@ -156,36 +156,45 @@ namespace FighterXD.Main
 
         public void Remove(Object @object)
         {
-            if (objects.Contains(@object))
+            try
             {
-                objects.Remove(@object);
-                if (@object as PhysicalObject != null)
+                if (objects.Contains(@object))
                 {
-                    if (@object as RigidObject != null)
+                    objects.Remove(@object);
+                    if (@object as PhysicalObject != null)
                     {
-                        rigidObjects.Remove((RigidObject)@object);
-                    }
-                    else
-                    {
-                        physicalObjects.Remove((PhysicalObject)@object);
-                        if (@object as ExplodableObject != null)
+                        if (@object as RigidObject != null)
                         {
-                            explodableObjects.Remove((ExplodableObject)@object);
+                            rigidObjects.Remove((RigidObject)@object);
+                        }
+                        else
+                        {
+                            physicalObjects.Remove((PhysicalObject)@object);
+                            if (@object as ExplodableObject != null)
+                            {
+                                explodableObjects.Remove((ExplodableObject)@object);
+                            }
                         }
                     }
                 }
+                if (@object.GetType().GetInterfaces().Contains(typeof(IUpdateable)))
+                {
+                    updateables.Remove((IUpdateable)@object);
+                }
+                if (@object.GetType().GetInterfaces().Contains(typeof(IDrawable)))
+                {
+                    int index = drawables.IndexOf((IDrawable)@object);
+                    if (index >= 0 && index < drawables.Count)
+                        drawables.RemoveAt(index);
+                }
+                foreach (Object g in @object.children)
+                {
+                    Remove(g);
+                }
             }
-            if (@object.GetType().GetInterfaces().Contains(typeof(IUpdateable)))
+            catch (Exception e)
             {
-                updateables.Remove((IUpdateable)@object);
-            }
-            if (@object.GetType().GetInterfaces().Contains(typeof(IDrawable)))
-            {
-                drawables.Remove((IDrawable)@object);
-            }
-            foreach (Object g in @object.children)
-            {
-                Remove(g);
+                Console.WriteLine("idk what is going on - " + e);
             }
         }
 

@@ -12,6 +12,14 @@ namespace FighterXD.Main
     {
         protected GameObject gameObject;
 
+        public GameObject GameObject
+        {
+            get
+            {
+                return gameObject;
+            }
+        }
+
         public Vector2 position;
 
         public float maxDistSquared { get; protected set; }

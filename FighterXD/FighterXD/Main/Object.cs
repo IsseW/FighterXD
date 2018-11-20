@@ -71,13 +71,13 @@ namespace FighterXD.Main
             get
             {
                 if (m_parent != null)
-                    return m_parent.Rotation + Rotation;
+                    return m_parent.GlobalRotation + Rotation;
                 else
                     return Rotation;
             }
             set
             {
-                if (m_parent != null) value += m_parent.GlobalRotation;
+                if (m_parent != null) value -= m_parent.GlobalRotation;
                 Rotation = value;
             }
         }
@@ -153,7 +153,7 @@ namespace FighterXD.Main
             get
             {
                 if (m_parent != null)
-                    return m_parent.GlobalPosition + XMath.RotateVector(position, m_parent.Rotation);
+                    return Parent.LocalToGlobal(position);
                 else return position;
             }
 

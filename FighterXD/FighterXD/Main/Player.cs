@@ -11,6 +11,11 @@ namespace FighterXD.Main
 {
     public struct PlayerInfo
     {
+
+        public Texture2D bulletTexture;
+        public float bulletSpeed;
+        public float shootingCooldown;
+
         public float jumpForce;
         public float speed;
         public float acceleration;
@@ -19,7 +24,7 @@ namespace FighterXD.Main
         public Keys jump;
         public Keys shoot;
         public float MaxHealth;
-        public PlayerInfo(Keys left, Keys right, Keys jump, Keys shoot, float jumpForce, float speed, float acceleration, float MaxHealth)
+        public PlayerInfo(Keys left, Keys right, Keys jump, Keys shoot, float jumpForce, float speed, float acceleration, float MaxHealth, Texture2D bulletTexture, float bulletSpeed, float shootingCooldown)
         {
             this.left = left;
             this.right = right;
@@ -29,12 +34,23 @@ namespace FighterXD.Main
             this.speed = speed;
             this.acceleration = acceleration;
             this.MaxHealth = MaxHealth;
+            this.bulletTexture = bulletTexture;
+            this.bulletSpeed = bulletSpeed;
+            this.shootingCooldown = shootingCooldown;
         }
     }
     public class Player : RigidObject, IUpdateable
     {
         public PlayerInfo controls;
         public float Health { get; private set; }
+
+        private Object shootingPlace;
+
+        public void InitShootingPlace(Object o)
+        {
+            shootingPlace = o;
+        }
+
 
         public Player(PlayerInfo controls, Collider collider) : base(collider)
         {
@@ -77,8 +93,8 @@ namespace FighterXD.Main
 
         }
 
-        
 
+        float timeSinceLast;
         public void Update(float delta)
         {
             if (world.input.keyboard.IsKeyDown(controls.left))
@@ -97,6 +113,37 @@ namespace FighterXD.Main
             {
                 Jump(delta);
             }
+            if (timeSinceLast <= 0 && (world.input.keyboard.IsKeyDown(controls.shoot) || world.input.mouse.LeftButton == ButtonState.Pressed))
+            {
+                timeSinceLast = controls.shootingCooldown;
+                Shoot();
+            }
+            else if (timeSinceLast > 0)
+            {
+                timeSinceLast -= delta;
+            }
+        }
+
+        private void Shoot()
+        {
+            Vector2 pos = Vector2.Zero;
+            Vector2 up = new Vector2(1, 0);
+            float rot = 0;
+
+            if (shootingPlace == null) pos = GlobalPosition;
+            else
+            {
+                pos = shootingPlace.GlobalPosition;
+
+                up = shootingPlace.LocalVectorToGlobal(up);
+                Console.WriteLine(up);
+                rot = shootingPlace.GlobalRotation;
+            }
+
+            ExplodingObject e = new ExplodingObject(new CircleCollider(1), controls.bulletTexture, pos, new Vector2(25, 25), rot);
+            e.Collider.SetSize();
+            world.Initialize(e);
+            e.AddForce(up * controls.bulletSpeed + velocity);
         }
 
         private void WalkLeft(float delta)
@@ -217,5 +264,49 @@ namespace FighterXD.Main
         public RotateTowardsMouse(Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(sprite, position, imageScale, rotation, orgin, global)
         {
         }
+    }
+
+    public class ExplodingObject : RigidObject
+    {
+
+        public ExplodingObject(Collider collider) : base(collider)
+        {
+
+        }
+
+        public ExplodingObject(Collider collider, Texture2D sprite) : base(collider, sprite)
+        {
+            
+        }
+
+        public ExplodingObject(Collider collider, Texture2D sprite, Vector2 position) : base(collider, sprite, position)
+        {
+
+
+        }
+
+        public ExplodingObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale) : base(collider, sprite, position, imageScale)
+        {
+            
+        }
+
+        public ExplodingObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation) : base(collider, sprite, position, imageScale, rotation)
+        {
+            
+        }
+
+        public ExplodingObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(collider, sprite, position, imageScale, rotation, orgin, global)
+        {
+            
+        }
+        public override void OnCollisionEnter(Vector2 force, Collider other, Vector2 point)
+        {
+            base.OnCollisionEnter(force, other, point);
+            world.Remove(this);
+
+            world.Remove(other.GameObject);
+
+        }
+
     }
 }

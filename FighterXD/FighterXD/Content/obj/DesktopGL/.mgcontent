@@ -4,11 +4,21 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+<<<<<<< HEAD
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/eye.png</File>
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/blob.png</File>
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/Rocket_Launcher.png</File>
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/background.jpeg</File>
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/floor.png</File>
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/font.spritefont</File>
+    <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/Bullet.png</File>
+=======
     <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/eye.png</File>
     <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/blob.png</File>
     <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/Rocket_Launcher.png</File>
     <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/background.jpeg</File>
     <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/floor.png</File>
     <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/font.spritefont</File>
+>>>>>>> 40134670447f82a51a580a9d16e5c6bc42a9588d
   </SourceFiles>
 </SourceFileCollection>
