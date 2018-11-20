@@ -248,7 +248,7 @@ namespace FighterXD.Main
                 {
                     foreach (PhysicalObject p in physicalObjects.ToList())
                     {
-                        if (p.active)
+                        if (p != null && p.active)
                         {
                             if (Vector2.DistanceSquared(p.position, r.position) <= r.Collider.maxDistSquared + p.Collider.maxDistSquared && r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
                             {

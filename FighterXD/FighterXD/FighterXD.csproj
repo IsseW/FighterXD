@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Game1.cs" />
     <Compile Include="Main\Collider.cs" />
+    <Compile Include="Main\Enemy.cs" />
     <Compile Include="Main\GameObject.cs" />
     <Compile Include="Main\Interfaces.cs" />
     <Compile Include="Main\Object.cs" />

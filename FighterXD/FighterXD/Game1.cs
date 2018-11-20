@@ -89,7 +89,9 @@ namespace FighterXD
             }; 
             world.Initialize(player1);
 
-            
+            Enemy zombie = new Enemy(Content.Load<Texture2D>("blob"), new CircleCollider(1), new Vector2(700, 0), new Vector2(100, 100), 500, player1);
+            zombie.Collider.SetSize();
+            world.Initialize(zombie);
             // player1 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
             // player2 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
             // background = new Background(Content.Load<Texture2D>("jail"), Window);
@@ -119,7 +121,7 @@ namespace FighterXD
                 {
                     Vector2 pos = start + new Vector2(x, y) * blockSize;
 
-                    ExplodableObject p = new ExplodableObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, blockSize) {color = new Color(86,162,94,255) };
+                    ExplodableObject p = new ExplodableObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, blockSize) {color = new Color(random.Next(80,220),random.Next(182,210),random.Next(80,100),255) };
                     p.Collider.SetSize();
                     world.Initialize(p);
                 }
