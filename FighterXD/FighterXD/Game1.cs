@@ -67,7 +67,7 @@ namespace FighterXD
             //p.Collider.SetSize();
             //world.Initialize(p);
 
-            player1 = new Player(new PlayerInfo(Keys.A, Keys.D, Keys.W, Keys.R, 30000, 1000, 0.2f, 20, Content.Load<Texture2D>("Bullet"), 2000, 0.1f), new CircleCollider(1), Content.Load<Texture2D>("blob"), new Vector2(500, 0), new Vector2(100, 100)) { color = Color.Green};
+            player1 = new Player(new PlayerInfo(Keys.A, Keys.D, Keys.W, Keys.R, 30000, 1000, 0.2f, 20, Content.Load<Texture2D>("Bullet"), 2000, 0.1f), new CircleCollider(1), Content.Load<Texture2D>("blob"), new Vector2(500, 0), new Vector2(100, 100)) { color = Color.Blue};
             player1.Collider.SetSize();
 
             Texture2D eye = Content.Load<Texture2D>("eye");
