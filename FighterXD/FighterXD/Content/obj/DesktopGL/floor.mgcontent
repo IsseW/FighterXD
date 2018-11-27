@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/floor.png</SourceFile>
-  <SourceTime>2018-11-13T14:33:58.6488554+01:00</SourceTime>
-  <DestFile>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/bin/DesktopGL/floor.xnb</DestFile>
-  <DestTime>2018-11-27T13:42:52.986817+01:00</DestTime>
+  <SourceFile>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/floor.png</SourceFile>
+  <SourceTime>2018-11-13T14:32:29.6359725+01:00</SourceTime>
+  <DestFile>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/bin/DesktopGL/floor.xnb</DestFile>
+  <DestTime>2018-11-27T14:33:38.6202671+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
