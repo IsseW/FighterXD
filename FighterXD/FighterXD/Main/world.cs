@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.Xna.Framework.Audio;
 namespace FighterXD.Main
 {
     public struct Input
@@ -60,6 +60,44 @@ namespace FighterXD.Main
         private List<ExplodableObject> explodableObjects;
         private List<IUpdateable> updateables;
         private List<IDrawable> drawables;
+        private List<Enemy> enemies;
+
+        public List<T> GetObjectsOfType<T>()
+        {
+            List<T> o = new List<T>();
+            if (typeof(T).IsAssignableFrom(typeof(RigidObject)))
+            {
+                foreach (RigidObject r in rigidObjects)
+                {
+                    if (r.GetType().IsAssignableFrom(typeof(T)))
+                    {
+                        o.Add((T)Convert.ChangeType(r, typeof(T)));
+                    }
+                }
+            }
+            else if (typeof(T).IsAssignableFrom(typeof(PhysicalObject)))
+            {
+                foreach (PhysicalObject p in physicalObjects)
+                {
+                    if (p.GetType().IsAssignableFrom(typeof(T)))
+                    {
+                        o.Add((T)Convert.ChangeType(p, typeof(T)));
+                    }
+                }
+            }
+            else if (typeof(T).IsAssignableFrom(typeof(Object)))
+            {
+                foreach (Object obj in objects)
+                {
+                    if (obj.GetType().IsAssignableFrom(typeof(T)))
+                    {
+                        o.Add((T)Convert.ChangeType(obj, typeof(T)));
+                    }
+                }
+            }
+
+            return o;
+        }
 
         public World(Texture2D background, Vector2 worldSize, Viewport viewport, params GameObject[] gameObjects)
         {
@@ -72,6 +110,7 @@ namespace FighterXD.Main
             explodableObjects = new List<ExplodableObject>();
             updateables = new List<IUpdateable>();
             drawables = new List<IDrawable>();
+            enemies = new List<Enemy>();
             foreach (GameObject g in gameObjects)
             {
                 Initialize(g);
@@ -89,7 +128,7 @@ namespace FighterXD.Main
         {
             foreach (ExplodableObject e in explodableObjects.ToList())
             {
-                if (e != null && Vector2.DistanceSquared(toCheck.position, e.position) <= toCheck.Collider.maxDistSquared + e.Collider.maxDistSquared && toCheck.Collider.Collide(e.Collider))
+                if (e != null && Vector2.DistanceSquared(toCheck.LocalPosition, e.LocalPosition) <= toCheck.Collider.maxDistSquared + e.Collider.maxDistSquared && toCheck.Collider.Collide(e.Collider))
                 {
                     Remove(e);
                 }
@@ -109,11 +148,16 @@ namespace FighterXD.Main
             collider.Update(position);
             foreach (ExplodableObject e in explodableObjects.ToList())
             {
-                if (e != null && Vector2.DistanceSquared(position, e.position) <= collider.maxDistSquared + e.Collider.maxDistSquared && collider.Collide(e.Collider))
+                if (e != null && Vector2.DistanceSquared(position, e.LocalPosition) <= collider.maxDistSquared + e.Collider.maxDistSquared && collider.Collide(e.Collider))
                 {
                     Remove(e);
                 }
             }
+        }
+
+        public Enemy[] GetEnemies()
+        {
+            return enemies.ToArray();
         }
 
         public void Initialize(Object @object)
@@ -128,6 +172,10 @@ namespace FighterXD.Main
                    if (@object as RigidObject != null)
                    {
                        rigidObjects.Add((RigidObject)@object);
+                        if (@object as Enemy != null)
+                        {
+                            enemies.Add((Enemy)@object);
+                        }
                    }
                    else
                    {
@@ -147,7 +195,7 @@ namespace FighterXD.Main
                     drawables.Add((IDrawable)@object);
                 }
             }
-
+            @object.Rotation = @object.Rotation;
             foreach(Object g in @object.children)
             {
                 Initialize(g);
@@ -166,6 +214,10 @@ namespace FighterXD.Main
                         if (@object as RigidObject != null)
                         {
                             rigidObjects.Remove((RigidObject)@object);
+                            if (@object as Enemy != null)
+                            {
+                                enemies.Remove((Enemy)@object);
+                            }
                         }
                         else
                         {
@@ -213,7 +265,7 @@ namespace FighterXD.Main
             viewport.size *= 1 + x;
         }
 
-        public void Update(float delta, KeyboardState state, MouseState mouseState, GameWindow window)
+        public async void Update(float delta, KeyboardState state, MouseState mouseState, GameWindow window)
         {
             input = new Input(state, mouseState);
             //=========================================
@@ -244,12 +296,36 @@ namespace FighterXD.Main
                 ZoomViewport(-0.03f);
             }
 
+
             //=========================================
             //=================PHYSICS=================
             //=========================================
-            foreach (RigidObject r in rigidObjects.ToList())
+            Task[] physics = new Task[rigidObjects.Count];
+            for (int i = 0; i < rigidObjects.Count; i++)
             {
-                if (!Rect.Contains(r.position.ToPoint())) Remove(r);
+                RigidObject r = rigidObjects[i];
+                physics[i] = new Task(new Action(delegate { ValidateRigidObject(r, delta); }));
+            }
+            foreach (Task t in physics)
+            {
+                t.Start();
+            }
+            await Task.WhenAll(physics);
+            //=========================================
+            //=================UPDATE=================
+            //=========================================
+            foreach (IUpdateable i in updateables.ToList())
+            {
+                i.Update(delta);
+            }
+        }
+
+        private void ValidateRigidObject(RigidObject r, float delta)
+        {
+            if (r.active)
+            {
+                if (!Rect.Contains(r.LocalPosition.ToPoint())) r.active = false;
+
                 r.timeSinceLastCollision += delta;
                 bool col = false;
                 List<Vector2> no = new List<Vector2>();
@@ -259,7 +335,7 @@ namespace FighterXD.Main
                     {
                         if (p != null && p.active)
                         {
-                            if (Vector2.DistanceSquared(p.position, r.position) <= r.Collider.maxDistSquared + p.Collider.maxDistSquared && r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
+                            if (Vector2.DistanceSquared(p.LocalPosition, r.LocalPosition) <= r.Collider.maxDistSquared + p.Collider.maxDistSquared && r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
                             {
                                 Vector2 velOld = r.velocity;
                                 float velAlongNormal = Vector2.Dot(r.velocity, oNormal);
@@ -270,7 +346,6 @@ namespace FighterXD.Main
                                     no.Add(oNormal);
                                     r.OnCollisionEnter(velOld, p.Collider, myPoint);
                                 }
-
 
                             }
                         }
@@ -287,20 +362,16 @@ namespace FighterXD.Main
                             add -= v * f;
                     }
 
-                r.position += add * delta;
-                
+                r.LocalPosition += add * delta;
+
                 r.AddForce(g * delta);
                 r.velocity /= 1 + µ * delta;
             }
-            //=========================================
-            //=================UPDATE=================
-            //=========================================
-            foreach (IUpdateable i in updateables.ToList())
+            else
             {
-                i.Update(delta);
+                if (Rect.Contains(r.LocalPosition.ToPoint())) r.active = true;
             }
         }
-
 
         public void Draw(SpriteBatch spritebatch, GameWindow window)
         {
@@ -308,11 +379,14 @@ namespace FighterXD.Main
             if (background != null) sprite = background;
             else sprite = XMath.missingTexture;
             spritebatch.Draw(sprite, Vector2.Zero, Color.White);
-            Rectangle v = new Rectangle((viewport.center - viewport.Size / (2 * viewport.size)).ToPoint(), viewport.Size.ToPoint());
+            Rectangle v = new Rectangle(ViewportToWorld(Vector2.Zero).ToPoint(), new Point((int)(window.ClientBounds.Width / viewport.size), (int)(window.ClientBounds.Height / viewport.size)));
+            
             foreach (IDrawable d in drawables.ToList())
             {
-                if (d != null)
+                if (d != null && v.Intersects(d.drawRectangle))
+                {
                     d.Draw(spritebatch);
+                }
             }
         }
 

@@ -14,11 +14,10 @@ namespace FighterXD.Main
 
         public const float pi = 3.14159265359f;
 
-        public const float degToRad = 0.0174532925f;
+        public const float deg2Rad = 0.0174532925f;
 
-        public static Vector2 RotateVector(this Vector2 v, float angle)
+        public static Vector2 RotateVector(this Vector2 v, float rad)
         {
-            float rad = angle;
             float sin = (float)Math.Sin(rad);
             float cos = (float)Math.Cos(rad);
 
@@ -29,8 +28,9 @@ namespace FighterXD.Main
             return v;
         }
 
-        public static Vector2 RotateVectorRad(this Vector2 v, float angle)
+        public static Vector2 RotateVectorDegrees(this Vector2 v, float angle)
         {
+            angle *= deg2Rad;
             float sin = (float)Math.Sin(angle);
             float cos = (float)Math.Cos(angle);
 
@@ -57,8 +57,21 @@ namespace FighterXD.Main
 
         public static float GetAngle(Vector2 a, Vector2 b)
         {
-            float angle = (float)(Math.Atan2(b.Y, b.X) - Math.Atan2(a.Y, a.X));
+            float angle = (float)(Math.Atan2(b.Y - a.Y, b.X - a.X));
             return angle;
+        }
+
+        public static void Debug(params object[] args)
+        {
+            string s = "";
+            if (args.Length > 0) {
+                s += args[0].ToString();
+                for (int i = 1; i < args.Length; i++)
+                {
+                    s += ", " + args[i].ToString();
+                }
+            }
+            Console.WriteLine(s);
         }
     }
 }

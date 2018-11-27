@@ -27,7 +27,7 @@ namespace FighterXD.Main
         private void Update ()
         {
             if (gameObject != null)
-                position = gameObject.GlobalPosition;
+                position = gameObject.Position;
         }
 
         protected Vector2 GlobalToLocal(Vector2 v)
