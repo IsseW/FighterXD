@@ -107,36 +107,6 @@ namespace FighterXD
             // background = new Background(Content.Load<Texture2D>("jail"), Window);
             // weapon = new Weapon(Content.Load<Texture2D>("Rocket_launcher")); 
         }
-
-        void InitTerrain(Vector2 start, Vector2 size, Vector2 blockSize, Texture2D texture, bool ceiling)
-        {
-            Vector2 blocks = size / blockSize;
-            int blocksX = 0;
-            int blocksY = 0;
-            if (!ceiling)
-            {
-                blocksX = (int)Math.Floor(blocks.X);
-                blocksY = (int)Math.Floor(blocks.Y);
-            }
-            else
-            {
-                blocksX = (int)Math.Ceiling(blocks.X);
-                blocksY = (int)Math.Ceiling(blocks.Y);
-            }
-             
-            Random random = new Random();
-            for (int y = 0; y <= blocksY; y++)
-            {
-                for (int x = 0; x <= blocksX; x++)
-                {
-                    Vector2 pos = start + new Vector2(x, y) * blockSize;
-
-                    ExplodableObject p = new ExplodableObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, blockSize) {color = new Color(random.Next(80,220),random.Next(182,210),random.Next(80,100),255) };
-                    p.Collider.SetSize();
-                    world.Initialize(p);
-                }
-            }
-        }
         
         protected override void UnloadContent()
         {

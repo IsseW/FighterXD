@@ -16,7 +16,9 @@ namespace FighterXD.Main
             this.world = world;
         }
 
-        
+        public bool enabled = true;
+
+
 
         public Object Parent
         {
@@ -277,10 +279,11 @@ namespace FighterXD.Main
         public Rectangle drawRectangle => new Rectangle(Position.ToPoint(), (spriteFont.MeasureString(text) * size).ToPoint());
         
 
-        public void Draw(SpriteBatch spritebatch)
+        public virtual void Draw(SpriteBatch spritebatch)
         {
-            
-            spritebatch.DrawString(spriteFont, text, world.WorldToViewport(Position), color, GlobalRotation, spriteFont.MeasureString(text) * 0.5f, size * world.viewport.size, effects, 0);
+            Vector2 stringSize = spriteFont.MeasureString(text);
+            Vector2 scale = (size * world.viewport.size) / stringSize;
+            spritebatch.DrawString(spriteFont, text, world.WorldToViewport(Position), color, GlobalRotation, stringSize * 0.5f, scale, effects, 0);
         }
     }
 }
