@@ -43,6 +43,7 @@ namespace FighterXD.Main
     {
         public PlayerInfo controls;
         public float Health { get; private set; }
+        
 
         private Object shootingPlace;
 
@@ -130,13 +131,12 @@ namespace FighterXD.Main
             Vector2 up = new Vector2(1, 0);
             float rot = 0;
 
-            if (shootingPlace == null) pos = GlobalPosition;
+            if (shootingPlace == null) pos = Position;
             else
             {
-                pos = shootingPlace.GlobalPosition;
+                pos = shootingPlace.Position;
 
                 up = shootingPlace.LocalVectorToGlobal(up);
-                Console.WriteLine(up);
                 rot = shootingPlace.GlobalRotation;
             }
 
@@ -148,12 +148,40 @@ namespace FighterXD.Main
 
         private void WalkLeft(float delta)
         {
-            if (velocity.X > -controls.speed) AddForce(new Vector2(-controls.speed * delta / controls.acceleration, 0));
+            float movement = -controls.speed * delta / controls.acceleration;
+            if (velocity.X > -controls.speed) AddForce(new Vector2(movement, 0));
+            Vector2[] c = GetCollisionNormals();
+            if (c != null)
+            {
+                foreach (Vector2 v in c)
+                {
+                    float d = Vector2.Dot(v, new Vector2(1, 0));
+                    if (d > 0)
+                    {
+                        AddForce(new Vector2(0, (movement - world.g.Y * delta) * d));
+                        break;
+                    }
+                }
+            }
         }
 
         private void WalkRight(float delta)
         {
-            if (velocity.X < controls.speed) AddForce(new Vector2(controls.speed * delta / controls.acceleration, 0));
+            float movement = controls.speed * delta / controls.acceleration;
+            if (velocity.X < controls.speed) AddForce(new Vector2(movement, 0));
+            Vector2[] c = GetCollisionNormals();
+            if (c != null)
+            {
+                foreach (Vector2 v in c)
+                {
+                    float d = Vector2.Dot(v, new Vector2(-1, 0));
+                    if (d > 0)
+                    {
+                        AddForce(new Vector2(0, (-movement - world.g.Y * delta) * d));
+                        break;
+                    }
+                }
+            }
         }
 
         private void Jump(float delta)
@@ -166,7 +194,7 @@ namespace FighterXD.Main
             base.OnCollisionEnter(force, other, point);
             if (force.Length() > 10000)
             {
-                world.Explode(this);
+                Damage(force.Length() / 10000);
             }
         }
 
@@ -191,21 +219,16 @@ namespace FighterXD.Main
 
     public class RotateTowardsPoint : GameObject, IUpdateable
     {
-        public Vector2 point
-        {
-            get
-            {
-                return LocalToGlobal(local);
-            }
-            set
-            {
-                local = GlobalToLocal(value);
-            }
-        }
-        private Vector2 local;
+        
+
+        public Vector2 point;
+
         public virtual void Update(float delta)
         {
-            up = point - GlobalPosition;
+            Vector2 v = point - Position;
+            if (v.X < 0) effects = SpriteEffects.FlipVertically;
+            else effects = SpriteEffects.None;
+            up = new Vector2(Math.Abs(v.X), v.Y);
         }
 
         public RotateTowardsPoint() : base()
@@ -237,7 +260,7 @@ namespace FighterXD.Main
     {
         public override void Update(float delta)
         {
-            point = world.input.mouse.Position.ToVector2() - world.WorldToViewport(GlobalPosition);
+            point = world.ViewportToWorld(world.input.mouse.Position.ToVector2());
             base.Update(delta);
         }
 
@@ -266,9 +289,8 @@ namespace FighterXD.Main
         }
     }
 
-    public class ExplodingObject : RigidObject
+    public class ExplodingObject : RigidObject, IUpdateable
     {
-
         public ExplodingObject(Collider collider) : base(collider)
         {
 
@@ -299,14 +321,23 @@ namespace FighterXD.Main
         {
             
         }
+
         public override void OnCollisionEnter(Vector2 force, Collider other, Vector2 point)
         {
             base.OnCollisionEnter(force, other, point);
             world.Remove(this);
-
-            world.Remove(other.GameObject);
-
         }
 
+        public void Update(float delta)
+        {
+            foreach (Enemy e in world.GetEnemies())
+            {
+                if (Vector2.DistanceSquared(e.Position, Position) <= e.Collider.maxDistSquared + Collider.maxDistSquared && Collider.Collide(e.Collider))
+                {
+                    world.Remove(e);
+                    world.Remove(this);
+                }
+            }
+        }
     }
 }

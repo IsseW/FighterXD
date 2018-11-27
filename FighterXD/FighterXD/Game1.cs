@@ -173,7 +173,7 @@ namespace FighterXD
             Vector2[] normals = player1.GetCollisionNormals();
             text.text = player1.Health.ToString();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) world.viewport.center = player1.position;
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) world.viewport.center = player1.LocalPosition;
         }
         
         protected override void Draw(GameTime gameTime)

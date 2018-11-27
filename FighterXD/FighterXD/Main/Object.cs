@@ -16,6 +16,8 @@ namespace FighterXD.Main
             this.world = world;
         }
 
+        
+
         public Object Parent
         {
             get
@@ -37,49 +39,128 @@ namespace FighterXD.Main
         {
             get
             {
-                return GlobalVectorToLocal(new Vector2(0, -1));
+                return LocalVectorToGlobal(new Vector2(0, -1));
             }
             set
             {
-                float rot = XMath.GetAngle(new Vector2(0, -1), up) * XMath.degToRad;
-                GlobalRotation = (rot + XMath.GetAngle(up, value));
+                GlobalRotation = (XMath.GetAngle(up, value) + XMath.pi / 2);
             }
         }
 
-        public Vector2 position;
+        /// <summary>
+        /// The objects local position i.e it's position relative to it's parent.
+        /// </summary>
+        public Vector2 LocalPosition
+        {
+            get
+            {
+                return m_localPosition;
+            }
+
+            set
+            {
+                m_localPosition = value;
+                if (Parent != null)
+                    m_globalPosition = Parent.LocalToGlobal(value);
+                else m_globalPosition = value;
+
+                foreach (Object o in children)
+                {
+                    o.LocalPosition = o.LocalPosition;
+                }
 
 
-        private float m_rotation;
+            }
+        }
 
+        private Vector2 m_localPosition;
+
+        private Vector2 m_globalPosition;
+        /// <summary>
+        /// The object's global position i.e it's position relative to world zero.
+        /// </summary>
+        public Vector2 Position
+        {
+            get
+            {
+                return m_globalPosition;
+            }
+
+            set
+            {
+                m_globalPosition = value;
+                if (Parent != null)
+                    LocalPosition = Parent.GlobalToLocal(value);
+                else LocalPosition = value;
+
+                foreach (Object o in children)
+                {
+                    o.LocalPosition = o.LocalPosition;
+                }
+            }
+        }
+
+        private float m_localRotation;
+        private float m_globalRotation;
 
         public float Rotation
         {
-            set
-            {
-                m_rotation = value;
-            }
-
             get
             {
-                return m_rotation;
+                return m_localRotation;
+            }
+
+            set
+            {
+                m_localRotation = value;
+                if (Parent != null)
+                    m_globalRotation = LocalRotationToGlobal(value);
+                else
+                    m_globalRotation = value;
+
+                foreach (Object o in children)
+                {
+                    o.Rotation = o.Rotation;
+                    o.LocalPosition = o.LocalPosition;
+                }
             }
         }
-
 
         public float GlobalRotation
         {
             get
             {
-                if (m_parent != null)
-                    return m_parent.GlobalRotation + Rotation;
-                else
-                    return Rotation;
+                return m_globalRotation;
             }
             set
             {
-                if (m_parent != null) value -= m_parent.GlobalRotation;
-                Rotation = value;
+                m_globalRotation = value;
+                if (Parent != null)
+                    m_localRotation = GlobalRotationToLocal(value);
+                else
+                    m_globalRotation = value;
+
+                foreach (Object o in children)
+                {
+                    o.Rotation = o.Rotation;
+                    o.LocalPosition = o.LocalPosition;
+                }
             }
+        }
+        
+
+        public float LocalRotationToGlobal(float local)
+        {
+            if (Parent != null)
+                return local + Parent.GlobalRotation;
+            else return local;
+        }
+
+        public float GlobalRotationToLocal(float global)
+        {
+            if (Parent != null)
+                return global - Parent.GlobalRotation;
+            else return global;
         }
 
         public Vector2 LocalVectorToGlobal(Vector2 local)
@@ -94,7 +175,7 @@ namespace FighterXD.Main
 
         public Vector2 LocalToGlobal(Vector2 local)
         {
-            local = XMath.RotateVector(local, Rotation) + position;
+            local = XMath.RotateVector(local, Rotation) + LocalPosition;
             if (m_parent != null)
                 return m_parent.LocalToGlobal(local);
             return local;
@@ -106,7 +187,7 @@ namespace FighterXD.Main
 
             for (int i = 0; i < h.Length; i++)
             {
-                global = XMath.RotateVector(global - position, -Rotation);
+                global = XMath.RotateVector(global - h[i].LocalPosition, -Rotation);
             }
 
             return global;
@@ -148,21 +229,6 @@ namespace FighterXD.Main
             }
         }
 
-        public Vector2 GlobalPosition
-        {
-            get
-            {
-                if (m_parent != null)
-                    return Parent.LocalToGlobal(position);
-                else return position;
-            }
-
-            set
-            {
-                position = GlobalToLocal(value);
-            }
-        }
-
         public Object()
         {
             children = new List<Object>();
@@ -170,7 +236,7 @@ namespace FighterXD.Main
 
         public Object(Vector2 position) : this()
         {
-            this.position = position;
+            this.LocalPosition = position;
         }
 
         public Object(Vector2 position, float rotation) : this(position)
@@ -206,10 +272,15 @@ namespace FighterXD.Main
             this.spriteFont = spriteFont;
         }
 
+        
+
+        public Rectangle drawRectangle => new Rectangle(Position.ToPoint(), (spriteFont.MeasureString(text) * size).ToPoint());
+        
+
         public void Draw(SpriteBatch spritebatch)
         {
             
-            spritebatch.DrawString(spriteFont, text, world.WorldToViewport(GlobalPosition), color, GlobalRotation, spriteFont.MeasureString(text) * 0.5f, size * world.viewport.size, effects, 0);
+            spritebatch.DrawString(spriteFont, text, world.WorldToViewport(Position), color, GlobalRotation, spriteFont.MeasureString(text) * 0.5f, size * world.viewport.size, effects, 0);
         }
     }
 }

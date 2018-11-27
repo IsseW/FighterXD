@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace FighterXD.Main
 {
-    class Enemy : RigidObject,IUpdateable
+    public class Enemy : RigidObject, IUpdateable
     {
         float speed;
         Player player;
@@ -20,7 +20,7 @@ namespace FighterXD.Main
 
         public void Update(float delta)
         {
-            AddForce(Vector2.Normalize(player.GlobalPosition - GlobalPosition));
+            AddForce(Vector2.Normalize(player.Position - Position));
         }
     }
 }

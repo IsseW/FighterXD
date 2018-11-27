@@ -46,6 +46,10 @@ namespace FighterXD.Main
                 scale = spriteSize / new Vector2(sprite.Width, sprite.Height);
             }
         }
+        
+
+        public Rectangle drawRectangle => new Rectangle((Position - spriteSize/2).ToPoint(), spriteSize.ToPoint());
+        
 
         private Vector2 m_spriteSize;
         /// <summary>
@@ -90,7 +94,7 @@ namespace FighterXD.Main
                 this.localOrgin = orgin;
             else
             {
-                Vector2 v = orgin - GlobalPosition;
+                Vector2 v = orgin - Position;
             }
         }
 
@@ -101,7 +105,7 @@ namespace FighterXD.Main
             if (sprite != null)
             {
                 //spritebatch.Draw(g.sprite, WorldToViewport(g.GlobalPosition), null, g.color, g.GlobalRotation, (g.localOrgin) * viewport.size, scale * viewport.size, g.effects, 0);
-                spritebatch.Draw(sprite, world.WorldToViewport(GlobalPosition), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
+                spritebatch.Draw(sprite, world.WorldToViewport(Position), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
             }
         }
     }
