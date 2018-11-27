@@ -226,9 +226,21 @@ namespace FighterXD.Main
         public virtual void Update(float delta)
         {
             Vector2 v = point - Position;
-            if (v.X < 0) effects = SpriteEffects.FlipVertically;
-            else effects = SpriteEffects.None;
-            up = new Vector2(Math.Abs(v.X), v.Y);
+            if (children.Count > 0)
+            {
+                GameObject g = (GameObject)children[0];
+                if (v.X < 0)
+                {
+                    g.effects = SpriteEffects.FlipVertically;
+                    g.LocalPosition = new Vector2(-Math.Abs(g.LocalPosition.X), g.LocalPosition.Y);
+                }
+                else
+                {
+                    g.effects = SpriteEffects.None;
+                    g.LocalPosition = new Vector2(Math.Abs(g.LocalPosition.X), g.LocalPosition.Y);
+                }
+            }
+            up = new Vector2(v.X, v.Y);
         }
 
         public RotateTowardsPoint() : base()
