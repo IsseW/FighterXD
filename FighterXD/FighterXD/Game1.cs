@@ -61,8 +61,10 @@ namespace FighterXD
             world = new World(Content.Load<Texture2D>("background"),new Vector2(80000,80000),new Main.Viewport(new Vector2(0, 0), new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight)));
             //world.ViewportZoom = 1.01f;
 
-            InitTerrain(new Vector2(500, 400), new Vector2(500, 500), new Vector2(5, 5), Content.Load<Texture2D>("floor"), true);
+            //InitTerrain(new Vector2(500, 400), new Vector2(500, 500), new Vector2(5, 5), Content.Load<Texture2D>("floor"), true);
 
+            Button b = new Button(Content.Load<Texture2D>("floor"), "XD", new Vector2(0, 0), new Vector2(100, 100), Content.Load<SpriteFont>("font"), Color.Blue, Color.Green, Color.Red, Color.Black);
+            world.Initialize(b);  
             //PhysicalObject p = new PhysicalObject(new CircleCollider(1), Content.Load<Texture2D>("blob"), new Vector2(500, 2000), new Vector2(1500, 1500));
             //p.Collider.SetSize();
             //world.Initialize(p);
