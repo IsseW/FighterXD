@@ -18,7 +18,7 @@ namespace FighterXD.Main
 
         public bool enabled = true;
 
-
+        public virtual void OnDestroy() { }
 
         public Object Parent
         {

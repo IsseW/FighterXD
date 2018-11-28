@@ -208,6 +208,7 @@ namespace FighterXD.Main
             {
                 if (objects.Contains(@object))
                 {
+                    @object.OnDestroy();
                     objects.Remove(@object);
                     if (@object as PhysicalObject != null)
                     {
@@ -322,9 +323,9 @@ namespace FighterXD.Main
 
         private void ValidateRigidObject(RigidObject r, float delta)
         {
-            if (r.active)
+            if (r.enabled)
             {
-                if (!Rect.Contains(r.LocalPosition.ToPoint())) r.active = false;
+                if (!Rect.Contains(r.LocalPosition.ToPoint())) r.enabled = false;
 
                 r.timeSinceLastCollision += delta;
                 bool col = false;
@@ -333,7 +334,7 @@ namespace FighterXD.Main
                 {
                     foreach (PhysicalObject p in physicalObjects.ToList())
                     {
-                        if (p != null && p.active)
+                        if (p != null && p.enabled)
                         {
                             if (Vector2.DistanceSquared(p.LocalPosition, r.LocalPosition) <= r.Collider.maxDistSquared + p.Collider.maxDistSquared && r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
                             {
@@ -369,7 +370,7 @@ namespace FighterXD.Main
             }
             else
             {
-                if (Rect.Contains(r.LocalPosition.ToPoint())) r.active = true;
+                if (Rect.Contains(r.LocalPosition.ToPoint())) r.enabled = true;
             }
         }
 

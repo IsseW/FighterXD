@@ -114,8 +114,6 @@ namespace FighterXD.Main
     {
         private Collider m_collider;
 
-        public bool active = true;
-
         public Collider Collider
         {
             get
