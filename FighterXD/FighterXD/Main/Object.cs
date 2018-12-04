@@ -11,11 +11,10 @@ namespace FighterXD.Main
     public class Object
     {
         protected World world;
-        public void Init(World world)
+        public virtual void Init(World world)
         {
             this.world = world;
         }
-
         public bool enabled = true;
 
         public virtual void OnDestroy() { }
@@ -277,8 +276,9 @@ namespace FighterXD.Main
         
 
         public Rectangle drawRectangle => new Rectangle(Position.ToPoint(), (spriteFont.MeasureString(text) * size).ToPoint());
-        
 
+        public float depth { get => m_depth; set { m_depth = value; if (world != null) { world.SortDepth(); }} }
+        private float m_depth = 0;
         public virtual void Draw(SpriteBatch spritebatch)
         {
             Vector2 stringSize = spriteFont.MeasureString(text);

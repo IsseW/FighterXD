@@ -111,6 +111,7 @@ namespace FighterXD.Main
             updateables = new List<IUpdateable>();
             drawables = new List<IDrawable>();
             enemies = new List<Enemy>();
+            comparer = new Comparerer();
             foreach (GameObject g in gameObjects)
             {
                 Initialize(g);
@@ -200,6 +201,11 @@ namespace FighterXD.Main
             {
                 Initialize(g);
             }
+        }
+
+        public void SortDepth()
+        {
+            drawables.Sort(comparer);
         }
 
         public void Remove(Object @object)
@@ -301,11 +307,13 @@ namespace FighterXD.Main
             //=========================================
             //=================PHYSICS=================
             //=========================================
-            Task[] physics = new Task[rigidObjects.Count];
+            List<Task> physics = new List<Task>();
+            PhysicalObject[] p = physicalObjects.ToArray();
             for (int i = 0; i < rigidObjects.Count; i++)
             {
                 RigidObject r = rigidObjects[i];
-                physics[i] = new Task(new Action(delegate { ValidateRigidObject(r, delta); }));
+                if (r.enabled)
+                    physics.Add(new Task(new Action(delegate { ValidateRigidObject(r, delta, p); })));
             }
             foreach (Task t in physics)
             {
@@ -317,11 +325,12 @@ namespace FighterXD.Main
             //=========================================
             foreach (IUpdateable i in updateables.ToList())
             {
-                i.Update(delta);
+                if (i != null)
+                    i.Update(delta);
             }
         }
 
-        private void ValidateRigidObject(RigidObject r, float delta)
+        private void ValidateRigidObject(RigidObject r, float delta, PhysicalObject[] phys)
         {
             if (r.enabled)
             {
@@ -332,18 +341,19 @@ namespace FighterXD.Main
                 List<Vector2> no = new List<Vector2>();
                 if (r.Collider != null)
                 {
-                    foreach (PhysicalObject p in physicalObjects.ToList())
+                    foreach (PhysicalObject p in phys)
                     {
                         if (p != null && p.enabled)
                         {
-                            if (Vector2.DistanceSquared(p.LocalPosition, r.LocalPosition) <= r.Collider.maxDistSquared + p.Collider.maxDistSquared && r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
+                            Vector2 dif = p.Position - r.Position;
+                            if (dif.LengthSquared() <= r.Collider.maxDistSquared + p.Collider.maxDistSquared && Vector2.Dot(dif, r.velocity) > 0.5f && r.Collider.Collide(p.Collider, out Vector2 otherPoint, out Vector2 myPoint, out Vector2 oNormal))
                             {
                                 Vector2 velOld = r.velocity;
                                 float velAlongNormal = Vector2.Dot(r.velocity, oNormal);
                                 if (velAlongNormal < 0)
                                 {
                                     r.AddForce(-oNormal * velAlongNormal * (delta) * Vector2.Distance(otherPoint, myPoint));
-                                    if (!col) col = true;
+                                    col = true;
                                     no.Add(oNormal);
                                     r.OnCollisionEnter(velOld, p.Collider, myPoint);
                                 }
@@ -368,20 +378,16 @@ namespace FighterXD.Main
                 r.AddForce(g * delta);
                 r.velocity /= 1 + µ * delta;
             }
-            else
-            {
-                if (Rect.Contains(r.LocalPosition.ToPoint())) r.enabled = true;
-            }
         }
-
+        Comparerer comparer;
         public void Draw(SpriteBatch spritebatch, GameWindow window)
         {
             Texture2D sprite = null;
             if (background != null) sprite = background;
             else sprite = XMath.missingTexture;
-            spritebatch.Draw(sprite, Vector2.Zero, Color.White);
+            spritebatch.Draw(sprite, new Rectangle(Point.Zero, window.ClientBounds.Size), Color.White);
             Rectangle v = new Rectangle(ViewportToWorld(Vector2.Zero).ToPoint(), new Point((int)(window.ClientBounds.Width / viewport.size), (int)(window.ClientBounds.Height / viewport.size)));
-            
+
             foreach (IDrawable d in drawables.ToList())
             {
                 if (d != null && v.Intersects(d.drawRectangle))

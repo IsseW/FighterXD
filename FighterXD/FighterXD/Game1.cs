@@ -15,8 +15,6 @@ namespace FighterXD
 
         Player player1;
 
-        TextObject text;
-
         Rectangle window;
 
         public Game1()
@@ -68,7 +66,7 @@ namespace FighterXD
             //p.Collider.SetSize();
             //world.Initialize(p);
 
-            player1 = new Player(new PlayerInfo(Keys.A, Keys.D, Keys.W, Keys.R, 30000, 1000, 0.2f, 20, Content.Load<Texture2D>("Bullet"), 2000, 0.1f), new CircleCollider(1), Content.Load<Texture2D>("blob"), new Vector2(500, 0), new Vector2(100, 100)) { color = Color.Blue};
+            player1 = new Player(new PlayerInfo(Keys.A, Keys.D, Keys.W, Keys.R, 30000, 1000, 0.2f, 20, Content.Load<Texture2D>("Bullet"), 2000, 0.1f), new CircleCollider(1), Content.Load<Texture2D>("blob"), new Vector2(500, 0), new Vector2(100, 100)) { color = Color.Blue, depth = -1};
             player1.Collider.SetSize();
 
             Texture2D eye = Content.Load<Texture2D>("eye");
@@ -82,7 +80,7 @@ namespace FighterXD
                 Parent = player1
             };
 
-            text = new TextObject(Content.Load<SpriteFont>("font"), new Vector2(0, -100))
+            TextObject text = new TextObject(Content.Load<SpriteFont>("font"), new Vector2(0, -100))
             {
                 Parent = player1,
                 text = "XD",
@@ -91,7 +89,7 @@ namespace FighterXD
 
             RotateTowardsMouse o = new RotateTowardsMouse() { Parent = player1 };
 
-            GameObject weapon = new GameObject(new Vector2(player1.spriteSize.Y / 5, player1.spriteSize.Y / -2), -XMath.pi/2, Content.Load<Texture2D>("Rocket_launcher"), new Vector2(100, 50)) { Parent = o};
+            GameObject weapon = new GameObject(new Vector2(player1.spriteSize.Y / 5, player1.spriteSize.Y / -2), -XMath.pi/2, Content.Load<Texture2D>("Rocket_launcher"), new Vector2(100, 50)) { Parent = o, depth = 1 };
 
             Main.Object w = new Main.Object(new Vector2(50, 0)) { Parent = weapon };
 
@@ -100,9 +98,12 @@ namespace FighterXD
             world.Initialize(player1);
             
 
-            Enemy zombie = new Enemy(Content.Load<Texture2D>("blob"), new CircleCollider(1), new Vector2(700, 0), new Vector2(100, 100), 500, player1);
+            Enemy zombie = new Enemy(Content.Load<Texture2D>("blob"), new CircleCollider(1), new Vector2(700, 0), new Vector2(100, 100), 500, player1) { depth = -2 };
             zombie.Collider.SetSize();
             world.Initialize(zombie);
+
+
+            world.SortDepth();
             // player1 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
             // player2 = new Player(Content.Load<Texture2D>("blob"), 380, 640, 4.5f, 4.5f, Content.Load<Texture2D>("eye"));
             // background = new Background(Content.Load<Texture2D>("jail"), Window);
@@ -142,7 +143,6 @@ namespace FighterXD
             if (Keyboard.GetState().IsKeyDown(Keys.H)) world.Explode(player1);
 
             Vector2[] normals = player1.GetCollisionNormals();
-            text.text = player1.Health.ToString();
 
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) world.viewport.center = player1.LocalPosition;
         }

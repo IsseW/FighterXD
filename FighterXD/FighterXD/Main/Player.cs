@@ -140,7 +140,7 @@ namespace FighterXD.Main
                 rot = shootingPlace.GlobalRotation;
             }
 
-            ExplodingObject e = new ExplodingObject(new CircleCollider(1), controls.bulletTexture, pos, new Vector2(25, 25), rot);
+            ExplodingObject e = new ExplodingObject(new CircleCollider(1), controls.bulletTexture, pos, new Vector2(25, 25), rot) { depth = -4 };
             e.Collider.SetSize();
             world.Initialize(e);
             e.AddForce(up * controls.bulletSpeed + velocity);

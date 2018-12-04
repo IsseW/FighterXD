@@ -28,7 +28,7 @@ namespace FighterXD.Main
                 {
                     Vector2 pos = start + new Vector2(x, y) * blockSize;
 
-                    TerrainObject p = new TerrainObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, new Vector2(blockSize), this, x, y) { color = new Color(random.Next(80, 220), random.Next(182, 210), random.Next(80, 100), 255) };
+                    TerrainObject p = new TerrainObject(new RectangleCollider(new Rectangle(1, 1, 1, 1), false), texture, pos, new Vector2(blockSize), this, x, y) { color = new Color(random.Next(80, 220), random.Next(182, 210), random.Next(80, 100), 255), depth = -2 };
                     p.Collider.SetSize();
                     children.Add(p);
                     t[x, y] = p;

@@ -49,7 +49,10 @@ namespace FighterXD.Main
         
 
         public Rectangle drawRectangle => new Rectangle((Position - spriteSize/2).ToPoint(), spriteSize.ToPoint());
-        
+
+        public float depth { get => m_depth; set { m_depth = value; if (world != null) { world.SortDepth(); }} }
+
+        private float m_depth = 0;
 
         private Vector2 m_spriteSize;
         /// <summary>
