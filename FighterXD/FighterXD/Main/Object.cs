@@ -15,7 +15,32 @@ namespace FighterXD.Main
         {
             this.world = world;
         }
-        public bool enabled = true;
+        public bool enabled
+        {
+            get
+            {
+                return m_enabled;
+            }
+            set
+            {
+                m_enabled = value;
+                foreach (Object o in children) o.enabled = value;
+            }
+        }
+
+        public T GetChildOfType<T>()
+        {
+            foreach (Object o in children)
+            {
+                if (o.GetType() == typeof(T))
+                {
+                    return (T)Convert.ChangeType(o, typeof(T));
+                }
+            }
+            return default(T);
+        }
+
+        private bool m_enabled = true;
 
         public virtual void OnDestroy() { }
 
@@ -252,9 +277,9 @@ namespace FighterXD.Main
 
         public SpriteFont spriteFont;
 
-        public Color color;
+        public float scale = 1;
 
-        public Vector2 size = new Vector2(1, 1);
+        public Color color;
 
         public SpriteEffects effects;
 
@@ -273,17 +298,22 @@ namespace FighterXD.Main
             this.spriteFont = spriteFont;
         }
 
-        
+        public TextObject(SpriteFont spriteFont, Vector2 position, float rotation, float scale) : base(position, rotation)
+        {
+            this.spriteFont = spriteFont;
+            this.scale = scale;
+        }
 
-        public Rectangle drawRectangle => new Rectangle(Position.ToPoint(), (spriteFont.MeasureString(text) * size).ToPoint());
+        public Rectangle drawRectangle => new Rectangle((Position - (spriteFont.MeasureString(text) * scale)/2).ToPoint(), (spriteFont.MeasureString(text) * scale).ToPoint());
 
         public float depth { get => m_depth; set { m_depth = value; if (world != null) { world.SortDepth(); }} }
         private float m_depth = 0;
         public virtual void Draw(SpriteBatch spritebatch)
         {
-            Vector2 stringSize = spriteFont.MeasureString(text);
-            Vector2 scale = (size * world.viewport.size) / stringSize;
-            spritebatch.DrawString(spriteFont, text, world.WorldToViewport(Position), color, GlobalRotation, stringSize * 0.5f, scale, effects, 0);
+            if (enabled)
+            {
+                spritebatch.DrawString(spriteFont, text, world.WorldToViewport(Position - new Vector2(scale / 2) * spriteFont.MeasureString(text)), color, GlobalRotation, new Vector2(scale / 2), scale * world.viewport.size, effects, 0);
+            }
         }
     }
 }

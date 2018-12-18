@@ -101,14 +101,14 @@ namespace FighterXD.Main
             }
         }
 
-        private Vector2 scale;
+        protected Vector2 scale;
 
-        public void Draw(SpriteBatch spritebatch)
+        public virtual void Draw(SpriteBatch spritebatch)
         {
-            if (sprite != null)
+            if (enabled && sprite != null)
             {
                 //spritebatch.Draw(g.sprite, WorldToViewport(g.GlobalPosition), null, g.color, g.GlobalRotation, (g.localOrgin) * viewport.size, scale * viewport.size, g.effects, 0);
-                spritebatch.Draw(sprite, world.WorldToViewport(Position), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
+                spritebatch.Draw(sprite, world.WorldToViewport(Position - scale / 2), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
             }
         }
     }
@@ -168,6 +168,8 @@ namespace FighterXD.Main
         public float timeSinceLastCollision;
 
         private Vector2[] collisionNormals;
+
+        public bool collisionsOn = true;
 
         public void SetCollisionNormals(params Vector2[] collisionNormals)
         {

@@ -89,5 +89,13 @@ namespace FighterXD.Main
         {
             terrain.OnDestroyTile(x, y);
         }
+        public override void Draw(SpriteBatch spritebatch)
+        {
+            base.Draw(spritebatch);
+            if (!enabled)
+            {
+                spritebatch.Draw(sprite, world.WorldToViewport(Position - scale/2), null, new Color(163, 107, 52), GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
+            }
+        }
     }
 }

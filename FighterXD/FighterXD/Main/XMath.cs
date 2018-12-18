@@ -65,10 +65,13 @@ namespace FighterXD.Main
         {
             string s = "";
             if (args.Length > 0) {
-                s += args[0].ToString();
+                if (args[0] == null) s += "null";
+                else s += args[0].ToString();
                 for (int i = 1; i < args.Length; i++)
                 {
-                    s += ", " + args[i].ToString();
+                    
+                    if (args[i] == null) s += ", null";
+                    else s += ", " + args[i].ToString();
                 }
             }
             Console.WriteLine(s);

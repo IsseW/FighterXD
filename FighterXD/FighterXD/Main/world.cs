@@ -29,6 +29,8 @@ namespace FighterXD.Main
 
         public float size;
 
+        public float speed;
+
         public Vector2 Size
         {
             get
@@ -37,10 +39,11 @@ namespace FighterXD.Main
             }
         }
 
-        public Viewport (Vector2 center, Vector2 ratio)
+        public Viewport (Vector2 center, Vector2 ratio, float speed)
         {
             this.center = center;
             this.ratio = ratio;
+            this.speed = speed;
             size = 1;
         }
     }
@@ -280,19 +283,19 @@ namespace FighterXD.Main
             //=========================================
             if (mouseState.Position.X <= 0 && viewport.center.X > -worldSize.X/2)
             {
-                viewport.center -= new Vector2(5, 0) / viewport.size;
+                viewport.center -= new Vector2(5, 0) * viewport.speed / viewport.size;
             }
             if (mouseState.Position.X >= window.ClientBounds.Width - 1 && viewport.center.X < worldSize.X / 2)
             {
-                viewport.center += new Vector2(5, 0) / viewport.size;
+                viewport.center += new Vector2(5, 0) * viewport.speed / viewport.size;
             }
             if (mouseState.Position.Y >= window.ClientBounds.Height - 1 && viewport.center.Y < worldSize.Y / 2)
             {
-                viewport.center += new Vector2(0, 5) / viewport.size;
+                viewport.center += new Vector2(0, 5) * viewport.speed / viewport.size;
             }
             if (mouseState.Position.Y <= 0&& viewport.center.Y > -worldSize.Y / 2)
             {
-                viewport.center -= new Vector2(0, 5) / viewport.size;
+                viewport.center -= new Vector2(0, 5) * viewport.speed / viewport.size;
             }
             if (state.IsKeyDown(Keys.Q))
             {
@@ -339,7 +342,7 @@ namespace FighterXD.Main
                 r.timeSinceLastCollision += delta;
                 bool col = false;
                 List<Vector2> no = new List<Vector2>();
-                if (r.Collider != null)
+                if (r.collisionsOn && r.Collider != null)
                 {
                     foreach (PhysicalObject p in phys)
                     {
@@ -385,7 +388,8 @@ namespace FighterXD.Main
             Texture2D sprite = null;
             if (background != null) sprite = background;
             else sprite = XMath.missingTexture;
-            spritebatch.Draw(sprite, new Rectangle(Point.Zero, window.ClientBounds.Size), Color.White);
+            if (sprite != null)
+                spritebatch.Draw(sprite, new Rectangle(Point.Zero, window.ClientBounds.Size), Color.White);
             Rectangle v = new Rectangle(ViewportToWorld(Vector2.Zero).ToPoint(), new Point((int)(window.ClientBounds.Width / viewport.size), (int)(window.ClientBounds.Height / viewport.size)));
 
             foreach (IDrawable d in drawables.ToList())

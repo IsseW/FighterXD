@@ -23,8 +23,9 @@ namespace FighterXD.Main
         public Keys right;
         public Keys jump;
         public Keys shoot;
+        public Keys second;
         public float MaxHealth;
-        public PlayerInfo(Keys left, Keys right, Keys jump, Keys shoot, float jumpForce, float speed, float acceleration, float MaxHealth, Texture2D bulletTexture, float bulletSpeed, float shootingCooldown)
+        public PlayerInfo(Keys left, Keys right, Keys jump, Keys shoot, Keys second, float jumpForce, float speed, float acceleration, float MaxHealth, Texture2D bulletTexture, float bulletSpeed, float shootingCooldown)
         {
             this.left = left;
             this.right = right;
@@ -37,19 +38,22 @@ namespace FighterXD.Main
             this.bulletTexture = bulletTexture;
             this.bulletSpeed = bulletSpeed;
             this.shootingCooldown = shootingCooldown;
+            this.second = second;
         }
     }
     public class Player : RigidObject, IUpdateable
     {
         public PlayerInfo controls;
         public float Health { get; private set; }
-        
 
+        private TextObject text;
         private Object shootingPlace;
 
         public void InitShootingPlace(Object o)
         {
             shootingPlace = o;
+            text = GetChildOfType<TextObject>();
+            text.text = Health.ToString();
         }
 
 
@@ -123,6 +127,15 @@ namespace FighterXD.Main
             {
                 timeSinceLast -= delta;
             }
+            if (world.input.keyboard.IsKeyDown(controls.second) || world.input.mouse.RightButton == ButtonState.Pressed)
+            {
+                Dig();
+            }
+        }
+
+        private void Dig()
+        {
+            world.Explode(this);
         }
 
         private void Shoot()
@@ -142,6 +155,7 @@ namespace FighterXD.Main
 
             ExplodingObject e = new ExplodingObject(new CircleCollider(1), controls.bulletTexture, pos, new Vector2(25, 25), rot) { depth = -4 };
             e.Collider.SetSize();
+            e.collisionsOn = false;
             world.Initialize(e);
             e.AddForce(up * controls.bulletSpeed + velocity);
         }
@@ -204,6 +218,7 @@ namespace FighterXD.Main
             {
                 Health -= f;
                 if (Health < 0) Health = 0;
+                text.text = Health.ToString();
             }
         }
 
@@ -213,6 +228,7 @@ namespace FighterXD.Main
             {
                 Health += f;
                 if (Health > controls.MaxHealth) Health = controls.MaxHealth;
+                text.text = Health.ToString();
             }
         }
     }
@@ -331,7 +347,7 @@ namespace FighterXD.Main
 
         public ExplodingObject(Collider collider, Texture2D sprite, Vector2 position, Vector2 imageScale, float rotation, Vector2 orgin, bool global) : base(collider, sprite, position, imageScale, rotation, orgin, global)
         {
-            
+
         }
 
         public override void OnCollisionEnter(Vector2 force, Collider other, Vector2 point)
@@ -346,7 +362,7 @@ namespace FighterXD.Main
             {
                 if (Vector2.DistanceSquared(e.Position, Position) <= e.Collider.maxDistSquared + Collider.maxDistSquared && Collider.Collide(e.Collider))
                 {
-                    world.Remove(e);
+                    e.health -= 1;
                     world.Remove(this);
                 }
             }

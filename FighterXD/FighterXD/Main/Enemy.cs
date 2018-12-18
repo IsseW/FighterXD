@@ -11,11 +11,41 @@ namespace FighterXD.Main
     {
         float speed;
         Player player;
-  
-       public Enemy(Texture2D zombie, Collider collider, Vector2 position, Vector2 imageScale, float speed, Player player) : base(collider, zombie, position, imageScale)
+
+        public float maxHealth;
+
+        public float health
+        {
+            get
+            {
+                return m_health;
+            }
+            set
+            {
+                if (value <= 0)
+                {
+                    value = 0;
+                }
+                else if (value > maxHealth) value = maxHealth;
+                m_health = value;
+
+                if (text != null)
+                {
+                    text.text = health.ToString();
+                }
+            }
+        }
+        private float m_health;
+        private TextObject text;
+
+
+       public Enemy(Texture2D zombie, Collider collider, Vector2 position, Vector2 imageScale, float speed, Player player, float health) : base(collider, zombie, position, imageScale)
        {
             this.speed = speed;
             this.player = player;
+            this.maxHealth = health;
+            this.health = health;
+            
        }
 
         public void Update(float delta)
@@ -48,9 +78,18 @@ namespace FighterXD.Main
 
             if (Sincelastdamage > 0.7f && Collider.Collide(player.Collider))
             {
-                player.Damage(2);
+                player.Damage(1);
                 Sincelastdamage = 0;
             }
+
+
+            if (text == null)
+            {
+                text = GetChildOfType<TextObject>();
+                if (text != null)
+                    text.text = health.ToString();
+            }
+
         }
         float Sincelastdamage;
     }

@@ -46,3 +46,6 @@ C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCP
 C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\font.xnb
 C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\Bullet.xnb
 C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\Bullet.xnb
+C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\button.xnb
+C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\buttonClick.xnb
+C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\deathSound.xnb
