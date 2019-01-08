@@ -13,6 +13,8 @@ namespace FighterXD.Main
         public static Texture2D missingTexture;
 
         public const float pi = 3.14159265359f;
+        public const float tao = pi * 2;
+
 
         public const float deg2Rad = 0.0174532925f;
 
@@ -39,6 +41,20 @@ namespace FighterXD.Main
             v.X = (cos * tx) - (sin * ty);
             v.Y = (sin * tx) + (cos * ty);
             return v;
+        }
+
+        public static float Repeat(float r, float f)
+        {
+            while (r < 0) r += f;
+            while (r > f) r -= f;
+            return r;
+        }
+
+        public static float Clamp(float f, float min, float max)
+        {
+            if (f < min) f = min;
+            if (f > max) f = max;
+            return f;
         }
 
         public static Vector2 ClosestPointOnLine(Vector2 A, Vector2 B, Vector2 P)

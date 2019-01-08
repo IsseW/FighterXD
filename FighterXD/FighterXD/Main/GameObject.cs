@@ -48,7 +48,7 @@ namespace FighterXD.Main
         }
         
 
-        public Rectangle drawRectangle => new Rectangle((Position - spriteSize/2).ToPoint(), spriteSize.ToPoint());
+        public Rectangle drawRectangle => new Rectangle((Position - spriteSize/2 - localOrgin * spriteSize).ToPoint(), spriteSize.ToPoint());
 
         public float depth { get => m_depth; set { m_depth = value; if (world != null) { world.SortDepth(); }} }
 
@@ -108,7 +108,7 @@ namespace FighterXD.Main
             if (enabled && sprite != null)
             {
                 //spritebatch.Draw(g.sprite, WorldToViewport(g.GlobalPosition), null, g.color, g.GlobalRotation, (g.localOrgin) * viewport.size, scale * viewport.size, g.effects, 0);
-                spritebatch.Draw(sprite, world.WorldToViewport(Position - scale / 2), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2), scale * world.viewport.size, effects, 0);
+                spritebatch.Draw(sprite, world.WorldToViewport(Position - scale / 2), null, color, GlobalRotation, new Vector2(sprite.Width / 2, sprite.Height / 2) + localOrgin, scale * world.viewport.size, effects, 0);
             }
         }
     }

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace FighterXD
 {
@@ -41,7 +42,6 @@ namespace FighterXD
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-
             switch (state)
             {
                 case GameState.Menu:
@@ -63,6 +63,43 @@ namespace FighterXD
         {
             base.Initialize();
         }
+
+        string savePath;
+        void SaveSettings()
+        {
+            string s = (graphics.IsFullScreen ? "X" : "D") + (int)(volume * 100);
+            
+            if (!File.Exists(savePath))
+            {
+                File.Create(savePath);
+            }
+
+            StreamWriter writer = File.CreateText(savePath);
+            writer.Write(s);
+            writer.Close();
+        }
+
+        void LoadSettings()
+        {
+            if (File.Exists(savePath))
+            {
+                string s = File.ReadAllText(savePath);
+
+                string[] str = s.Split('\n');
+                if (str.Length > 0)
+                {
+                    if (str[0].Length > 1)
+                    {
+                        if (str[0][0] == 'X')
+                        {
+                            ToggleFullscreen();
+                        }
+                        int i = int.Parse(str[0].Substring(1));
+                        volume = i / 100f;
+                    }
+                }
+            }
+        }
         
         protected override void LoadContent()
         {
@@ -70,7 +107,8 @@ namespace FighterXD
             Console.WriteLine("Starting to load assets");
             spriteBatch = new SpriteBatch(GraphicsDevice);
             string[] content = new string[] { "background", "Rocket_Launcher", "floor", "Bullet", "eye", "blob" };
-
+            savePath = Directory.GetCurrentDirectory() + @"\Save\settings";
+            LoadSettings();
             foreach (string s in content)
             {
                 textures.Add(s, Content.Load<Texture2D>(s));
@@ -108,10 +146,14 @@ namespace FighterXD
             return null;
         }
 
+        
+
+        static float volume = 1f;
+
         public static void PlaySound(string name)
         {
             if (sounds.TryGetValue(name, out SoundEffect sound))
-                sound.Play();
+                sound.Play(volume, 0, 0);
         }
 
         public static SpriteFont GetFont()
@@ -149,11 +191,12 @@ namespace FighterXD
             Button b1 = new Button(textures["floor"], "Toggle Fullscreen", new Vector2(0, -200), new Vector2(400, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, ToggleFullscreen);
             optionWorld.Initialize(b1);
 
+            Slider r = new Slider(volume, 0, 0.5f, (float f) => { volume = f; }, 
+                textures["floor"], textures["floor"], new Vector2(50, 50), new Vector2(800, 80), 80);
+            optionWorld.Initialize(r);
 
             Console.WriteLine("game loaded, it took " + (DateTime.Now.Subtract(t).TotalMilliseconds) + " milliseconds");
         }
-
-        
 
         void LoadGameWorld()
         {
@@ -222,7 +265,7 @@ namespace FighterXD
 
         protected override void UnloadContent()
         {
-            
+            SaveSettings();
         }
         
         protected void ToggleFullscreen()
