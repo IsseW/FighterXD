@@ -49,3 +49,12 @@ C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCP
 C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\button.xnb
 C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\buttonClick.xnb
 C:\Users\isidor.nielsen.LEARNET\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\deathSound.xnb
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\button.xnb
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\buttonClick.xnb
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\deathSound.xnb
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\Shoot.xnb
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\hit.xnb
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\menu.ogg
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\menu.xnb
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\inGame.ogg
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\inGame.xnb

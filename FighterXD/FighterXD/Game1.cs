@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -114,7 +115,7 @@ namespace FighterXD
                 textures.Add(s, Content.Load<Texture2D>(s));
             }
 
-            content = new string[] { "buttonClick", "deathSound" };
+            content = new string[] { "buttonClick", "deathSound","Shoot","hit", };
 
             foreach (string s in content)
             {
@@ -191,9 +192,30 @@ namespace FighterXD
             Button b1 = new Button(textures["floor"], "Toggle Fullscreen", new Vector2(0, -200), new Vector2(400, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, ToggleFullscreen);
             optionWorld.Initialize(b1);
 
-            Slider r = new Slider(volume, 0, 0.5f, (float f) => { volume = f; }, 
+            TextObject soundfxprcnt = new TextObject(font, new Vector2(600,50));
+            soundfxprcnt.text = "percent";
+            soundfxprcnt.color = Color.White;
+            Slider r = new Slider(volume, 0, 0.5f, (float f) => { volume = f; soundfxprcnt.text = (f * 100) + "%"; }, 
                 textures["floor"], textures["floor"], new Vector2(50, 50), new Vector2(800, 80), 80);
             optionWorld.Initialize(r);
+
+            TextObject soundfx = new TextObject(font, new Vector2(-600, 50));
+            soundfx.text = "sound Effects";
+            soundfx.color = Color.White;
+            optionWorld.Initialize(soundfx);
+
+            TextObject musicprcnt = new TextObject(font, new Vector2(600, 50));
+            musicprcnt.text = "percent";
+            musicprcnt.color = Color.White;
+            Slider m = new Slider(volume, 0, 0.5f, (float f) => { MediaPlayer.Volume = f; musicprcnt.text = (f * 100) + "%"; },
+               textures["floor"], textures["floor"], new Vector2(50, 150), new Vector2(800, 80), 80);
+            optionWorld.Initialize(m);
+
+            TextObject music = new TextObject(font, new Vector2(-600, 150));
+            music.text = "Music";
+            music.color = Color.White;
+            optionWorld.Initialize(music);
+
 
             Console.WriteLine("game loaded, it took " + (DateTime.Now.Subtract(t).TotalMilliseconds) + " milliseconds");
         }
@@ -284,7 +306,8 @@ namespace FighterXD
             }
             graphics.ToggleFullScreen();
         }
-
+        GameState laststate = GameState.Game;
+       
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -292,16 +315,33 @@ namespace FighterXD
             
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
             base.Update(gameTime);
-            
-            switch(state)
+            Song menu;
+            Song inGame;
+            menu = Content.Load<Song>("menu");
+            inGame = Content.Load<Song>("inGame");
+            switch (state)
             {
                 case GameState.Menu:
                     MenuWorldUpdate(delta);
+                    if(laststate != GameState.Menu)
+                    {
+                        MediaPlayer.Stop();
+                        MediaPlayer.Play(menu);
+                        laststate = GameState.Menu;
+                    }
+                    
                     break;
                 case GameState.Game:
                     GameWorldUpdate(delta);
+                    if (laststate != GameState.Game)
+                    {
+                        MediaPlayer.Stop();
+                        MediaPlayer.Play(inGame);
+                        laststate = GameState.Game;
+                    }
                     break;
                 case GameState.Option:
+
                     OptionWorldUpdate(delta);
                     break;
             }
