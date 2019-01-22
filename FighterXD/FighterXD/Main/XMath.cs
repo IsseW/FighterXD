@@ -10,7 +10,6 @@ namespace FighterXD.Main
 {
     static class XMath
     {
-        public static Texture2D missingTexture;
 
         public const float pi = 3.14159265359f;
         public const float tao = pi * 2;

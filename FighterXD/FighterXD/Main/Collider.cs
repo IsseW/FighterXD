@@ -274,81 +274,34 @@ namespace FighterXD.Main
             
             //converts point into local space
             point = GlobalToLocal(point);
-            if (true)
-            {
-                Vector2 PBR = point - bottomRight;
-                Vector2 PTL = point - topLeft;
+            Vector2 PBR = point - bottomRight;
+            Vector2 PTL = point - topLeft;
 
-                if (PTL.LengthSquared() < PBR.LengthSquared())
+            if (PTL.LengthSquared() < PBR.LengthSquared())
+            {
+                if (Vector2.DistanceSquared(point, topRight) < Vector2.DistanceSquared(point, bottomLeft))
                 {
-                    if (Vector2.DistanceSquared(point, topRight) < Vector2.DistanceSquared(point, bottomLeft))
-                    {
-                        normal = LocalVectorToGlobal(new Vector2(0, -1));
-                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, bottomLeft, point));
-                    }
-                    else
-                    {
-                        normal = LocalVectorToGlobal(new Vector2(-1, 0));
-                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, topRight, point));
-                    }
+                    normal = LocalVectorToGlobal(new Vector2(0, -1));
+                    return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, bottomLeft, point));
                 }
                 else
                 {
-                    if (Vector2.DistanceSquared(point, topRight) < Vector2.DistanceSquared(point, bottomLeft))
-                    {
-                        normal = LocalVectorToGlobal(new Vector2(1, 0));
-                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, topRight, point));
-                    }
-                    else
-                    {
-                        normal = LocalVectorToGlobal(new Vector2(0, 1));
-                        return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, bottomLeft, point));
-                    }
+                    normal = LocalVectorToGlobal(new Vector2(-1, 0));
+                    return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, topRight, point));
                 }
-
             }
             else
             {
-                // gets the closest point on the line between top left corner and top right corner
-                Vector2 closest = XMath.ClosestPointOnLine(topLeft, new Vector2(bottomRight.X, topLeft.Y), point);
-                float dis = Vector2.DistanceSquared(closest, point);
-                normal = new Vector2(0, -1);
-
-
-                // test if the point on the line between the top right corner and the bottom left corner is closer
-                Vector2 test = XMath.ClosestPointOnLine(new Vector2(topLeft.Y, bottomRight.X), bottomRight, point);
-                float testDis = Vector2.DistanceSquared(test, point);
-                if (testDis < dis)
+                if (Vector2.DistanceSquared(point, topRight) < Vector2.DistanceSquared(point, bottomLeft))
                 {
-                    normal = new Vector2(1, 0);
-                    closest = test;
-                    dis = testDis;
+                    normal = LocalVectorToGlobal(new Vector2(1, 0));
+                    return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, topRight, point));
                 }
-
-                //test if the point on the line between the top right corner and the bottom left corner is closer.
-                test = XMath.ClosestPointOnLine(topLeft, new Vector2(topLeft.X, bottomRight.Y), point);
-                testDis = Vector2.DistanceSquared(test, point);
-                if (testDis < dis)
+                else
                 {
-                    // if it is assign the normal to be correct and assign test to closest
-                    normal = new Vector2(-1, 0);
-                    closest = test;
-                    dis = testDis;
+                    normal = LocalVectorToGlobal(new Vector2(0, 1));
+                    return LocalToGlobal(XMath.ClosestPointOnLine(bottomRight, bottomLeft, point));
                 }
-
-                //test if the point on the line between the bottom right corner and the bottom left is closer
-                test = XMath.ClosestPointOnLine(bottomRight, new Vector2(topLeft.X, bottomRight.Y), point);
-                testDis = Vector2.DistanceSquared(test, point);
-                if (testDis < dis)
-                {
-                    normal = new Vector2(0, 1);
-                    closest = test;
-                    dis = testDis;
-                }
-
-                if (gameObject != null)
-                    normal = LocalVectorToGlobal(normal);
-                return LocalToGlobal(closest);
             }
         }
 

@@ -62,3 +62,4 @@ C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCP
 C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\inGame.ogg
 C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\inGame.xnb
 >>>>>>> 0f4cd44a6191b54fd905e67cf52bb86f688f69d3
+C:\Users\lukas.dalsmyr\Desktop\FighterXD\FighterXD\FighterXD\bin\DesktopGL\AnyCPU\Debug\Content\Portal.xnb
