@@ -155,7 +155,7 @@ namespace FighterXD.Main
             Vector2 pos = Vector2.Zero;
             Vector2 up = new Vector2(1, 0);
             float rot = 0;
-
+            Game1.PlaySound("Shoot");
             if (shootingPlace == null) pos = Position;
             else
             {
@@ -378,6 +378,7 @@ namespace FighterXD.Main
             {
                 if (Vector2.DistanceSquared(e.Position, Position) <= e.Collider.maxDistSquared + Collider.maxDistSquared && Collider.Collide(e.Collider))
                 {
+                    Game1.PlaySound("hit");
                     e.health -= 1;
                     world.Remove(this);
                 }

@@ -4,6 +4,7 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+<<<<<<< HEAD
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/eye.png</File>
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/blob.png</File>
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/Rocket_Launcher.png</File>
@@ -15,5 +16,21 @@
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/buttonClick.wav</File>
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/deathSound.wav</File>
     <File>C:/Users/isidor.nielsen.LEARNET/Desktop/FighterXD/FighterXD/FighterXD/Content/Portal.png</File>
+=======
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/eye.png</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/blob.png</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/Rocket_Launcher.png</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/background.jpeg</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/floor.png</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/font.spritefont</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/Bullet.png</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/button.png</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/buttonClick.wav</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/deathSound.wav</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/Shoot.wav</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/hit.wav</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/menu.mp3</File>
+    <File>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/inGame.mp3</File>
+>>>>>>> 0f4cd44a6191b54fd905e67cf52bb86f688f69d3
   </SourceFiles>
 </SourceFileCollection>

@@ -116,6 +116,7 @@
 /processorParam:Quality=Best
 /build:deathSound.wav
 
+<<<<<<< HEAD
 #begin Portal.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -127,4 +128,29 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Portal.png
+=======
+#begin Shoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Shoot.wav
+
+#begin hit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:hit.wav
+
+#begin menu.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:menu.mp3
+
+#begin inGame.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:inGame.mp3
+>>>>>>> 0f4cd44a6191b54fd905e67cf52bb86f688f69d3
 
