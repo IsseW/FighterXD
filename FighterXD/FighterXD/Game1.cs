@@ -68,7 +68,7 @@ namespace FighterXD
         string savePath;
         void SaveSettings()
         {
-            string s = (graphics.IsFullScreen ? "X" : "D") + (int)(volume * 100);
+            string s = (graphics.IsFullScreen ? "X" : "D") + (int)(volume * 100) + "\n" + (int)(MediaPlayer.Volume * 100);
             
             if (!File.Exists(savePath))
             {
@@ -95,8 +95,17 @@ namespace FighterXD
                         {
                             ToggleFullscreen();
                         }
-                        int i = int.Parse(str[0].Substring(1));
-                        volume = i / 100f;
+                        if (int.TryParse(str[0].Substring(1), out int i))
+                        {
+                            volume = i / 100f;
+                        }
+                        else volume = 0.5f;
+
+                        if (int.TryParse(str[0].Substring(1), out i))
+                        {
+                            MediaPlayer.Volume = i / 100f;
+                        }
+                        else MediaPlayer.Volume = 0.5f;
                     }
                 }
             }
@@ -131,7 +140,6 @@ namespace FighterXD
             LoadMenuWorld();
 
             LoadGameWorld();
-
 
             LoadOptionWorld();
         }

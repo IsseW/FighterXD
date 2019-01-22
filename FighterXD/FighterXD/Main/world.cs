@@ -389,7 +389,6 @@ namespace FighterXD.Main
         {
             Texture2D sprite = null;
             if (background != null) sprite = background;
-            else sprite = XMath.missingTexture;
             if (sprite != null)
                 spritebatch.Draw(sprite, new Rectangle(Point.Zero, window.ClientBounds.Size), Color.White);
             Rectangle v = new Rectangle(ViewportToWorld(Vector2.Zero).ToPoint(), new Point((int)(window.ClientBounds.Width / viewport.size), (int)(window.ClientBounds.Height / viewport.size)));
