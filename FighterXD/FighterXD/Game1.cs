@@ -107,7 +107,7 @@ namespace FighterXD
             DateTime t = DateTime.Now;
             Console.WriteLine("Starting to load assets");
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            string[] content = new string[] { "background", "Rocket_Launcher", "floor", "Bullet", "eye", "blob", "Portal"};
+            string[] content = new string[] { "background", "Rocket_Launcher", "floor", "Bullet", "eye", "blob", "Portal","backgroundmenu"};
             savePath = Directory.GetCurrentDirectory() + @"\Save\settings";
             LoadSettings();
             foreach (string s in content)
@@ -168,11 +168,11 @@ namespace FighterXD
             DateTime t = DateTime.Now;
             Console.WriteLine("Starting to load menu");
 
-            menuWorld = new World(null, new Vector2(1920, 1080), new Main.Viewport(Vector2.Zero, new Vector2(1920, 1080), 0.5f));
-            Button b1 = new Button(textures["floor"], "Play", new Vector2(0, -200), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, () => { state = GameState.Game; });
-            Button b2 = new Button(textures["floor"], "Reset", new Vector2(0, -70), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, () => { LoadGameWorld(); });
-            Button b3 = new Button(textures["floor"], "Options", new Vector2(0, 70), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, () => { state = GameState.Option; });
-            Button b4 = new Button(textures["floor"], "Quit", new Vector2(0, 200), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, Exit);
+            menuWorld = new World(textures["backgroundmenu"],    new Vector2(1920, 1080), new Main.Viewport(Vector2.Zero, new Vector2(1920, 1080), 0.5f));
+            Button b1 = new Button(textures["floor"], "Play",    new Vector2(-600, -200), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, () => { state = GameState.Game; });
+            Button b2 = new Button(textures["floor"], "Reset",   new Vector2(-600, -70), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, () => { LoadGameWorld(); });
+            Button b3 = new Button(textures["floor"], "Options", new Vector2(-600, 70), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, () => { state = GameState.Option; });
+            Button b4 = new Button(textures["floor"], "Quit",    new Vector2(-600, 200), new Vector2(200, 100), font, Color.LightGray, Color.WhiteSmoke, Color.Gray, Color.Black, Exit);
             menuWorld.Initialize(b1);
             menuWorld.Initialize(b2);
             menuWorld.Initialize(b3);
@@ -265,7 +265,7 @@ namespace FighterXD
             world.Initialize(player1);
 
 
-            Enemy zombie = new Enemy(textures["blob"], new CircleCollider(1), new Vector2(700, 0), new Vector2(100, 100), 500, player1, 3) { depth = -2 };
+            Enemy zombie = new Enemy(textures["blob"], new CircleCollider(1), new Vector2(700, 0), new Vector2(100, 100), 500, player1, 10) { depth = -2 };
             zombie.Collider.SetSize();
 
             TextObject eText = new TextObject(font, new Vector2(0, -80), 0, 0.4f)
@@ -281,15 +281,16 @@ namespace FighterXD
             small.Collider.SetSize();
             small.color = Color.Red;
             small.children[0].Position = new Vector2(0, -40);
+            small.maxHealth = 5;
             Enemy big = (Enemy)zombie.CreateCopy();
             big.spriteSize = new Vector2(300, 300);
             big.Collider.SetSize();
             big.color = Color.Yellow;
             big.children[0].Position = new Vector2(0, -160);
-            big.maxHealth = 5;
+            big.maxHealth = 25;
 
 
-            EnemySpawner spawner = new EnemySpawner(textures["Portal"], new Vector2(800, 800), new Vector2(700, 0), 5, 3, new Enemy[] { zombie , small, big }, player1) { depth = -4};
+            EnemySpawner spawner = new EnemySpawner(textures["Portal"], new Vector2(800, 800), new Vector2(700, 0), 10, 2, new Enemy[] { zombie , small, big }, player1) { depth = -4};
 
             world.Initialize(spawner);
 

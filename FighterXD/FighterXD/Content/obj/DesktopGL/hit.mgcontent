@@ -3,7 +3,7 @@
   <SourceFile>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/hit.wav</SourceFile>
   <SourceTime>2019-01-15T13:56:24.0652915+01:00</SourceTime>
   <DestFile>C:/Users/lukas.dalsmyr/Desktop/FighterXD/FighterXD/FighterXD/Content/bin/DesktopGL/hit.xnb</DestFile>
-  <DestTime>2019-01-15T13:57:03.3597075+01:00</DestTime>
+  <DestTime>2019-01-22T14:10:33.1036827+01:00</DestTime>
   <Importer>WavImporter</Importer>
   <ImporterTime>2017-03-01T16:05:36+01:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>
